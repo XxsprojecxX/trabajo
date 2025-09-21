@@ -206,21 +206,21 @@ function clusterALMA(rows: Topico[]): AlmaCluster[] {
 
 // === Agrupación visual por universos (si el backend ya los adjuntó) ===
 function layoutPorUniversos(items: any[], ancho: number, alto: number) {
- const computeFallback = () => {
+  const computeFallback = () => {
     if (!items.length || !ancho || !alto) {
       const cx = ancho ? ancho / 2 : 0;
       const cy = alto ? alto / 2 : 0;
       return items.map((it) => ({ ...it, px: cx, py: cy, size: 60 }));
     }
 
- const groups = new Map<string, any[]>();
+    const groups = new Map<string, any[]>();
     for (const it of items) {
       const g = it.universeId || "U?";
       if (!groups.has(g)) groups.set(g, []);
       groups.get(g)!.push(it);
     }
 
- const ids = Array.from(groups.keys());
+    const ids = Array.from(groups.keys());
     const cols = Math.ceil(Math.sqrt(ids.length || 1));
     const rows = Math.ceil(ids.length / cols);
     const pad = 80;
@@ -256,16 +256,15 @@ function layoutPorUniversos(items: any[], ancho: number, alto: number) {
         placed += k;
         ring++;
         if (ring > 8) break;
-    
       }
-  return out;
+    }
+    return out;
   };
 
   const fallback = computeFallback();
   const coordItems = items.filter((it) => isFiniteNumber(it?.coords?.x) && isFiniteNumber(it?.coords?.y));
   if (!coordItems.length) {
     return fallback;
-    }
   }
   const xs = coordItems.map((it) => Number(it.coords!.x));
   const ys = coordItems.map((it) => Number(it.coords!.y));
@@ -1377,8 +1376,7 @@ const { nodes: graphNodes, links: graphLinks } = useForceGraph(topicosFiltrados,
                       {tooltipConnections > 0
                         ? `${tooltipConnections} conexiones activas`
                         : 'Sin conexiones registradas'}
-                    </div>
-                    
+                    </div>               
                       <div className="absolute left-1/2 -bottom-1.5 h-3 w-3 rotate-45 border-r border-b border-gray-200 bg-white/90 -translate-x-1/2" />
                   </div>
                 )}
