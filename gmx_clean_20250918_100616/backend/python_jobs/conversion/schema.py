@@ -13,6 +13,8 @@
 # limitations under the License.
 # schema.py - Versión adaptada para tu proyecto local
 
+# schema.py - Versión adaptada para tu proyecto local
+
 from __future__ import absolute_import
 import logging
 
@@ -166,5 +168,3 @@ class RepeatedField(SchemaField):
         for item in value:
             result.append(self.element.ConvertValue(item))
         return result
-
-

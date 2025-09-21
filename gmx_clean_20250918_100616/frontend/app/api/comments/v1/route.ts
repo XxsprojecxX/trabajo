@@ -6,10 +6,9 @@ export const dynamic = "force-dynamic";
 function getBQ() {
   return new BigQuery({
     projectId: process.env.GOOGLE_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT,
-    // GOOGLE_APPLICATION_CREDENTIALS ya está en el .env.local con ruta absoluta
     location: process.env.BQ_LOCATION || "US",
   });
-}
+} 
 
 export async function GET(req: NextRequest) {
   try {
@@ -26,7 +25,6 @@ export async function GET(req: NextRequest) {
 
     const bq = getBQ();
 
-    // Consulta parametrizada
     const sql = `
       SELECT creator_handle, platform, post_id, post_url, profile_url, comment_id, comment_text, ts, likes
       FROM \`${viewFQN}\`
@@ -44,7 +42,57 @@ export async function GET(req: NextRequest) {
     };
 
     const [rows] = await bq.query(options);
-    return Response.json({ ok: true, count: rows.length, items: rows }, { status: 200 });
+    const metricsTable = process.env.COMMENTS_METRICS_TABLE_FQN;
+    let aggregates: { by_post: any[]; by_creator: any[] } = { by_post: [], by_creator: [] };
+
+    if (metricsTable) {
+      const metricsSql = `
+        WITH ranked AS (
+          SELECT
+            aggregated_type,
+            creator_handle,
+            platform,
+            post_id,
+            aggregated_at,
+            total_comments,
+            keywords,
+            sentiment,
+            ROW_NUMBER() OVER (
+              PARTITION BY aggregated_type, IFNULL(post_id, ''), creator_handle, platform
+              ORDER BY aggregated_at DESC
+            ) AS rn
+          FROM \`${metricsTable}\`
+          WHERE aggregated_type IN ('post', 'creator')
+          ${creators.length ? "AND creator_handle IN UNNEST(@creators)" : ""}
+        )
+        SELECT aggregated_type, creator_handle, platform, post_id, aggregated_at, total_comments, keywords, sentiment
+        FROM ranked
+        WHERE rn = 1
+      `;
+
+      const metricOptions: any = {
+        query: metricsSql,
+        params: {
+          creators: creators.length ? creators : undefined,
+        },
+      };
+
+      try {
+        const [metricRows] = await bq.query(metricOptions);
+        aggregates = {
+          by_post: metricRows.filter((row: any) => row.aggregated_type === "post"),
+          by_creator: metricRows.filter((row: any) => row.aggregated_type === "creator"),
+        };
+      } catch (metricError) {
+        console.error("Error leyendo métricas agregadas", metricError);
+      }
+    }
+
+    return Response.json(
+      { ok: true, count: rows.length, items: rows, aggregates },
+      { status: 200 },
+    );
+
   } catch (err: any) {
     return Response.json({ ok: false, error: err?.message || "unknown_error" }, { status: 500 });
   }

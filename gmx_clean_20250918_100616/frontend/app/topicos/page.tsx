@@ -1,6 +1,7 @@
  'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { MouseEvent as ReactMouseEvent } from 'react';
 
 // ===================================================================================
 // AJUSTE: INICIO DE LAS NUEVAS UTILIDADES ALMA
@@ -205,63 +206,94 @@ function clusterALMA(rows: Topico[]): AlmaCluster[] {
 
 // === Agrupación visual por universos (si el backend ya los adjuntó) ===
 function layoutPorUniversos(items: any[], ancho: number, alto: number) {
-  if (!items.length || !ancho || !alto) return items.map(it => ({...it, px: ancho/2, py: alto/2, size: 60}));
-  
-  // 1) agrupar por universeId (si no hay, va a "U?") sin cambiar estilos
-  const groups = new Map<string, any[]>();
-  for (const it of items) {
-    const g = it.universeId || "U?";
-    if (!groups.has(g)) groups.set(g, []);
-    groups.get(g)!.push(it);
-  }
+ const computeFallback = () => {
+    if (!items.length || !ancho || !alto) {
+      const cx = ancho ? ancho / 2 : 0;
+      const cy = alto ? alto / 2 : 0;
+      return items.map((it) => ({ ...it, px: cx, py: cy, size: 60 }));
+    }
 
-  // 2) coloca los centros en grid adaptable
-  const G = Array.from(groups.keys());
-  const cols = Math.ceil(Math.sqrt(G.length || 1));
-  const rows = Math.ceil(G.length / cols);
-  const pad = 80;
-  const cellW = Math.max(320, (ancho - pad*2)/cols);
-  const cellH = Math.max(240, (alto  - pad*2)/rows);
-  const centers = new Map<string, {cx:number, cy:number}>();
-  G.forEach((id, idx) => {
-    const r = Math.floor(idx/cols), c = idx%cols;
-    centers.set(id, { cx: pad + c*cellW + cellW/2, cy: pad + r*cellH + cellH/2 });
-  });
+ const groups = new Map<string, any[]>();
+    for (const it of items) {
+      const g = it.universeId || "U?";
+      if (!groups.has(g)) groups.set(g, []);
+      groups.get(g)!.push(it);
+    }
 
-  // 3) dentro de cada celda, hacemos un pequeño “packing” radial sin superposición visible
-  const out:any[] = [];
-  for (const [gid, arr] of groups) {
-    const { cx, cy } = centers.get(gid)!;
-    // ordena por volumen para que las grandes ocupen el centro
-    const sorted = [...arr].sort((a,b)=> (b.volumen||b.volume||0)-(a.volumen||a.volume||0));
+ const ids = Array.from(groups.keys());
+    const cols = Math.ceil(Math.sqrt(ids.length || 1));
+    const rows = Math.ceil(ids.length / cols);
+    const pad = 80;
+    const cellW = Math.max(320, (ancho - pad * 2) / cols);
+    const cellH = Math.max(240, (alto - pad * 2) / rows);
+    const centers = new Map<string, { cx: number; cy: number }>();
+    ids.forEach((id, idx) => {
+      const r = Math.floor(idx / cols);
+      const c = idx % cols;
+      centers.set(id, { cx: pad + c * cellW + cellW / 2, cy: pad + r * cellH + cellH / 2 });
+    });
+
+    const out: any[] = [];
+    for (const [gid, arr] of groups) {
+      const center = centers.get(gid)!;
+      const sorted = [...arr].sort((a, b) => (Number(b.volumen ?? b.volume ?? 0) - Number(a.volumen ?? a.volume ?? 0)));
+      let placed = 0;
+      let ring = 0;
+      while (placed < sorted.length) {
+        const k = ring === 0 ? 1 : Math.min(sorted.length - placed, 6 + ring * 4);
+        const rad = ring * 60;
+        for (let i = 0; i < k; i++) {
+          const itemIndex = placed + i;
+          if (itemIndex >= sorted.length) break;
+          const angle = k > 1 ? (2 * Math.PI * (i / k) + ring * 0.35) : 0;
+          const x = center.cx + Math.cos(angle) * rad;
+          const y = center.cy + Math.sin(angle) * rad;
+          const currentItem = sorted[itemIndex];
+          const volumeValue = Math.max(0, Number(currentItem.volume ?? currentItem.volumen ?? 0));
+          const size = Math.max(48, Math.min(120, Math.sqrt(volumeValue) * 10 || 48));
+          out.push({ ...currentItem, px: x, py: y, size });
+        }
+        placed += k;
+        ring++;
+        if (ring > 8) break;
     
-    let placed = 0;
-    let ring = 0;
-    while (placed < sorted.length) {
-      // Para el anillo 0 (centro), colocamos 1 elemento. Para los siguientes, más.
-      const k = (ring === 0) ? 1 : Math.min(sorted.length - placed, 6 + ring*4);
-      const rad = ring * 60; // Aumentar el radio con cada anillo
-      
-      for (let i=0; i<k; i++){
-        const itemIndex = placed + i;
-        if (itemIndex >= sorted.length) break;
-
-        const t = (k > 1) ? (2*Math.PI*(i/k) + ring*0.35) : 0;
-        const x = cx + Math.cos(t) * rad;
-        const y = cy + Math.sin(t) * rad;
-        
-        const currentItem = sorted[itemIndex];
-        const v = (currentItem.volume ?? currentItem.volumen ?? 1);
-        const size = Math.max(48, Math.min(120, Math.sqrt(v) * 10));
-
-        out.push({ ...currentItem, px: x, py: y, size });
       }
-      placed += k;
-      ring++;
-      if (ring > 8) break; // seguridad
+  return out;
+  };
+
+  const fallback = computeFallback();
+  const coordItems = items.filter((it) => isFiniteNumber(it?.coords?.x) && isFiniteNumber(it?.coords?.y));
+  if (!coordItems.length) {
+    return fallback;
     }
   }
-  return out;
+  const xs = coordItems.map((it) => Number(it.coords!.x));
+  const ys = coordItems.map((it) => Number(it.coords!.y));
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const rangeX = (maxX - minX) || 1;
+  const rangeY = (maxY - minY) || 1;
+  const pad = 60;
+  const innerW = Math.max(0, ancho - pad * 2);
+  const innerH = Math.max(0, alto - pad * 2);
+  const mapById = new Map(items.map((it: any) => [it.id, it]));
+
+  return fallback.map((node) => {
+    const original = mapById.get(node.id);
+    const c = original?.coords;
+    if (c && isFiniteNumber(c.x) && isFiniteNumber(c.y)) {
+      const nx = (Number(c.x) - minX) / rangeX;
+      const ny = (Number(c.y) - minY) / rangeY;
+      const px = pad + nx * innerW;
+      const py = pad + ny * innerH;
+      const v = Math.max(0, Number(original?.volumen ?? original?.volume ?? 0));
+      const size = Math.max(48, Math.min(140, Math.sqrt(v) * 10 || 48));
+      return { ...node, px, py, size };
+    }
+    return node;
+  });
 }
 
 
@@ -296,7 +328,236 @@ export interface Topico {
   y?: number;
   conexiones?: string[];
   universeId?: string; // Campo añadido por el backend
+   universeLabel?: string;
+  universePilar?: string;
+  universeConfianza?: number;
+  universeColor?: string;
+  universeSize?: number;
 }
+type GraphDisplayNode = Topico & { x: number; y: number; radius: number };
+type GraphDisplayLink = { source: string; target: string };
+
+type SimNode = {
+  id: string;
+  topico: Topico;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+};
+
+type SimLink = { source: SimNode; target: SimNode };
+
+type SentimentKey = 'positivo' | 'neutral' | 'negativo';
+
+const SENTIMENT_LABELS: Record<SentimentKey, string> = {
+  positivo: 'Positivo',
+  neutral: 'Neutral',
+  negativo: 'Negativo',
+};
+
+function getTopicoVolume(topico: Topico): number {
+  const raw = Number(topico.volumen ?? topico.volume ?? 0);
+  return Number.isFinite(raw) ? Math.max(0, raw) : 0;
+}
+
+function computeNodeRadius(volume: number, width: number, maxVolume: number): number {
+  const responsive = width < 640 ? 0.75 : width < 1024 ? 0.9 : 1;
+  const minRadius = 18 * responsive;
+  const maxRadius = 58 * responsive;
+  if (!maxVolume || maxVolume <= 0) return minRadius;
+  const ratio = Math.sqrt(Math.max(0, volume) / maxVolume);
+  const size = minRadius + ratio * (maxRadius - minRadius);
+  return Math.max(minRadius, Math.min(maxRadius, size));
+}
+
+function wrapLabel(text: string | undefined, maxChars: number): string[] {
+  if (!text) return ['Sin nombre'];
+  const words = text.trim().split(/\s+/);
+  const lines: string[] = [];
+  let current = '';
+
+  words.forEach((word) => {
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length > maxChars && current) {
+      lines.push(current);
+      current = word;
+    } else if (candidate.length > maxChars) {
+      lines.push(word);
+      current = '';
+    } else {
+      current = candidate;
+    }
+  });
+
+  if (current) lines.push(current);
+
+  return lines.slice(0, 3);
+}
+
+function sentimentPalette(label: SentimentKey): { fill: string; stroke: string } {
+  switch (label) {
+    case 'positivo':
+      return { fill: 'rgba(52, 211, 153, 0.18)', stroke: '#34d399' };
+    case 'negativo':
+      return { fill: 'rgba(248, 113, 113, 0.18)', stroke: '#f87171' };
+    default:
+      return { fill: 'rgba(251, 191, 36, 0.2)', stroke: '#f59e0b' };
+  }
+}
+
+function dominantSentiment(topico: Topico): { label: SentimentKey; value: number } {
+  const data = topico.sentimiento ?? {};
+  const entries: { label: SentimentKey; value: number }[] = [
+    { label: 'positivo', value: Number(data.positivo ?? 0) },
+    { label: 'neutral', value: Number(data.neutral ?? 0) },
+    { label: 'negativo', value: Number(data.negativo ?? 0) },
+  ];
+  entries.sort((a, b) => b.value - a.value);
+  const best = entries[0];
+  return { label: best.label, value: Math.max(0, Math.round(best.value)) };
+}
+
+function runForceSimulation(nodes: SimNode[], links: SimLink[], width: number, height: number) {
+  if (!nodes.length) return;
+
+  const iterations = 240;
+  const repulsionStrength = 2400;
+  const linkStrength = 0.018;
+  const damping = 0.88;
+  const maxVelocity = 5.5;
+  const margin = 14;
+  const viewSize = Math.max(120, Math.min(width, height));
+  const baseLinkDistance = Math.max(140, Math.min(viewSize * 0.45, 280));
+
+  for (let iter = 0; iter < iterations; iter++) {
+    for (let i = 0; i < nodes.length; i++) {
+      const nodeA = nodes[i];
+      for (let j = i + 1; j < nodes.length; j++) {
+        const nodeB = nodes[j];
+        let dx = nodeB.x - nodeA.x;
+        let dy = nodeB.y - nodeA.y;
+        let distSq = dx * dx + dy * dy;
+        if (distSq === 0) {
+          const jitterX = (Math.random() - 0.5) * 0.5;
+          const jitterY = (Math.random() - 0.5) * 0.5;
+          dx = jitterX;
+          dy = jitterY;
+          distSq = dx * dx + dy * dy;
+        }
+        let dist = Math.sqrt(distSq);
+        const minDist = nodeA.radius + nodeB.radius + 18;
+        if (dist < minDist) dist = minDist;
+        const force = repulsionStrength / (dist * dist);
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        nodeA.vx -= fx;
+        nodeA.vy -= fy;
+        nodeB.vx += fx;
+        nodeB.vy += fy;
+      }
+    }
+
+    links.forEach((link) => {
+      const source = link.source;
+      const target = link.target;
+      let dx = target.x - source.x;
+      let dy = target.y - source.y;
+      let dist = Math.sqrt(dx * dx + dy * dy) || 0.0001;
+      const ideal = baseLinkDistance + (source.radius + target.radius) * 0.5;
+      const diff = dist - ideal;
+      const fx = (dx / dist) * diff * linkStrength;
+      const fy = (dy / dist) * diff * linkStrength;
+      source.vx += fx;
+      source.vy += fy;
+      target.vx -= fx;
+      target.vy -= fy;
+    });
+
+    nodes.forEach((node) => {
+      node.vx += ((width / 2) - node.x) * 0.005;
+      node.vy += ((height / 2) - node.y) * 0.005;
+
+      node.vx *= damping;
+      node.vy *= damping;
+
+      const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
+      if (speed > maxVelocity) {
+        const scale = maxVelocity / speed;
+        node.vx *= scale;
+        node.vy *= scale;
+      }
+
+      node.x += node.vx;
+      node.y += node.vy;
+
+      const limit = node.radius + margin;
+      node.x = Math.max(limit, Math.min(width - limit, node.x));
+      node.y = Math.max(limit, Math.min(height - limit, node.y));
+    });
+  }
+}
+
+function buildGraphLayout(topicos: Topico[], width: number, height: number): { nodes: GraphDisplayNode[]; links: GraphDisplayLink[] } {
+  const volumes = topicos.map(getTopicoVolume);
+  const maxVolume = volumes.reduce((max, vol) => (vol > max ? vol : max), 0) || 1;
+  const baseRadius = Math.min(width, height) / 2.6;
+
+  const nodes: SimNode[] = topicos.map((topico, index) => {
+    const radius = computeNodeRadius(volumes[index], width, maxVolume);
+    const angle = (index / Math.max(1, topicos.length)) * Math.PI * 2;
+    return {
+      id: topico.id,
+      topico,
+      radius,
+      x: width / 2 + Math.cos(angle) * baseRadius * 0.6 + (Math.random() - 0.5) * 40,
+      y: height / 2 + Math.sin(angle) * baseRadius * 0.6 + (Math.random() - 0.5) * 40,
+      vx: 0,
+      vy: 0,
+    };
+  });
+
+  const nodeIndex = new Map(nodes.map((node) => [node.id, node]));
+  const links: GraphDisplayLink[] = [];
+  const seen = new Set<string>();
+
+  nodes.forEach((node) => {
+    (node.topico.conexiones ?? []).forEach((targetId) => {
+      if (!nodeIndex.has(targetId)) return;
+      const key = node.id < targetId ? `${node.id}|${targetId}` : `${targetId}|${node.id}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      links.push({ source: node.id, target: targetId });
+    });
+  });
+
+  const simLinks: SimLink[] = links.map((link) => ({
+    source: nodeIndex.get(link.source)!,
+    target: nodeIndex.get(link.target)!,
+  }));
+
+  runForceSimulation(nodes, simLinks, width, height);
+
+  const graphNodes: GraphDisplayNode[] = nodes.map((node) => ({
+    ...node.topico,
+    x: node.x,
+    y: node.y,
+    radius: node.radius,
+  }));
+
+  return { nodes: graphNodes, links };
+}
+
+function useForceGraph(topicos: Topico[], width: number, height: number) {
+  return useMemo(() => {
+    if (!topicos.length || width <= 0 || height <= 0) {
+      return { nodes: [] as GraphDisplayNode[], links: [] as GraphDisplayLink[] };
+    }
+    return buildGraphLayout(topicos, width, height);
+  }, [topicos, width, height]);
+}
+
 
 /** ====== Metadatos de Pilares (4 fijos) ====== */
 type PilarMeta = {
@@ -391,6 +652,245 @@ function deriveOportunidad(t: Topico) {
   const score = (pos * 0.55) + ((ternura + nostalgia) * 0.15) + (stressInv * 0.1) + (engPct * 0.2);
   return Math.round(score);
 }
+const isFiniteNumber = (value: any): value is number => typeof value === 'number' && Number.isFinite(value);
+
+function coerceNumber(value: any): number | undefined {
+  if (isFiniteNumber(value)) return value;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return undefined;
+    const normalized = trimmed.replace(/[%]/g, '').replace(/,/g, '');
+    const num = Number(normalized);
+    return Number.isFinite(num) ? num : undefined;
+  }
+  if (typeof value === 'boolean') return value ? 1 : 0;
+  return undefined;
+}
+
+function coerceString(value: any): string | undefined {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : undefined;
+  }
+  if (isFiniteNumber(value)) return String(value);
+  if (typeof value === 'boolean') return value ? 'true' : 'false';
+  return undefined;
+}
+
+function firstString(...values: any[]): string | undefined {
+  for (const value of values) {
+    const str = coerceString(value);
+    if (str) return str;
+  }
+  return undefined;
+}
+
+function parseMaybeJson(value: any): any {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'object') return value;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      return null;
+    }
+  }
+  if (value instanceof Uint8Array) {
+    try {
+      if (typeof TextDecoder !== 'undefined') {
+        return JSON.parse(new TextDecoder().decode(value));
+      }
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+function ensureArray(value: any): any[] | undefined {
+  if (Array.isArray(value)) return value;
+  const parsed = parseMaybeJson(value);
+  return Array.isArray(parsed) ? parsed : undefined;
+}
+
+const clampPercentage = (num: number) => Math.max(0, Math.min(100, num));
+
+function normalizeSentimiento(value: any): Sentimiento | undefined {
+  const obj = parseMaybeJson(value);
+  if (!obj || typeof obj !== 'object') return undefined;
+  const out: Sentimiento = {};
+  const pos = coerceNumber((obj as any).positivo ?? (obj as any).positive ?? (obj as any).pos ?? (obj as any).favorable);
+  if (pos !== undefined) out.positivo = clampPercentage(pos);
+  const neu = coerceNumber((obj as any).neutral ?? (obj as any).neutro ?? (obj as any).mid);
+  if (neu !== undefined) out.neutral = clampPercentage(neu);
+  const neg = coerceNumber((obj as any).negativo ?? (obj as any).negative ?? (obj as any).neg ?? (obj as any).desfavorable);
+  if (neg !== undefined) out.negativo = clampPercentage(neg);
+  return Object.keys(out).length ? out : undefined;
+}
+
+function normalizeEmociones(value: any): Emociones | undefined {
+  const obj = parseMaybeJson(value);
+  if (!obj || typeof obj !== 'object') return undefined;
+  const out: Emociones = {};
+  Object.entries(obj as Record<string, any>).forEach(([key, val]) => {
+    const num = coerceNumber(val);
+    if (num !== undefined) out[key] = clampPercentage(num);
+  });
+  return Object.keys(out).length ? out : undefined;
+}
+
+function normalizeStringArray(value: any): string[] | undefined {
+  if (value === null || value === undefined) return undefined;
+  const arr = ensureArray(value);
+  if (arr) {
+    const list = arr.map(coerceString).filter((v): v is string => !!v);
+    return list.length ? Array.from(new Set(list)) : [];
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return normalizeStringArray(parsed) ?? [];
+      }
+    } catch {
+      // ignore
+    }
+    return Array.from(new Set(trimmed.split(/[,;|]/).map((part) => part.trim()).filter(Boolean)));
+  }
+  return undefined;
+}
+
+function normalizeCoords(value: any, fallbackX?: any, fallbackY?: any): { x?: number; y?: number } | undefined {
+  const parsed = parseMaybeJson(value);
+  let x: number | undefined;
+  let y: number | undefined;
+
+  if (Array.isArray(parsed)) {
+    x = coerceNumber(parsed[0]);
+    y = coerceNumber(parsed[1]);
+  } else if (parsed && typeof parsed === 'object') {
+    x = coerceNumber((parsed as any).x ?? (parsed as any).lon ?? (parsed as any).lng ?? (parsed as any).longitude ?? (parsed as any)[0]);
+    y = coerceNumber((parsed as any).y ?? (parsed as any).lat ?? (parsed as any).latitude ?? (parsed as any)[1]);
+  }
+
+  if (x === undefined && y === undefined) {
+    x = coerceNumber(fallbackX);
+    y = coerceNumber(fallbackY);
+  }
+
+  if (x === undefined && y === undefined) return undefined;
+  const coords: { x?: number; y?: number } = {};
+  if (x !== undefined) coords.x = x;
+  if (y !== undefined) coords.y = y;
+  return coords;
+}
+
+function normalizeIntensity(value: string): EstadoResonancia['intensidad'] | undefined {
+  const lower = value.toLowerCase();
+  if (lower.includes('alta') || lower.includes('high')) return 'alta';
+  if (lower.includes('media') || lower.includes('mid') || lower.includes('medium')) return 'media';
+  if (lower.includes('baja') || lower.includes('low')) return 'baja';
+  return undefined;
+}
+
+function normalizeEstados(value: any): EstadoResonancia[] | undefined {
+  const arr = ensureArray(value);
+  if (!arr) return undefined;
+  const out: EstadoResonancia[] = [];
+  arr.forEach((entry) => {
+    const obj = parseMaybeJson(entry);
+    if (obj && typeof obj === 'object') {
+      const estado = firstString((obj as any).estado, (obj as any).state, (obj as any).nombre, (obj as any).label) ?? '—';
+      const porcentaje = coerceNumber((obj as any).porcentaje ?? (obj as any).percent ?? (obj as any).pct ?? (obj as any).valor ?? (obj as any).value);
+      const intensidad = coerceString((obj as any).intensidad ?? (obj as any).intensity ?? (obj as any).nivel ?? (obj as any).level);
+      const payload: EstadoResonancia = { estado };
+      if (porcentaje !== undefined) payload.porcentaje = porcentaje;
+      const normInt = intensidad ? normalizeIntensity(intensidad) : undefined;
+      if (normInt) payload.intensidad = normInt;
+      if (payload.estado || payload.porcentaje !== undefined || payload.intensidad) {
+        out.push(payload);
+      }
+    } else if (typeof entry === 'string') {
+      out.push({ estado: entry });
+    }
+  });
+  return out.length ? out : undefined;
+}
+
+function normalizeDate(value: any): string | undefined {
+  const str = firstString(value);
+  if (!str) return undefined;
+  const dt = new Date(str);
+  if (!Number.isNaN(dt.getTime())) return dt.toISOString();
+  return str;
+}
+
+function prepareTopico(raw: any, idx: number): Topico {
+  const sentimiento = normalizeSentimiento(raw?.sentimiento ?? raw?.sentiment);
+  const emociones = normalizeEmociones(raw?.emociones ?? raw?.emotions);
+  const coords = normalizeCoords(raw?.coords ?? raw?.coord ?? raw?.coordinates, raw?.x, raw?.y);
+  const conexiones = normalizeStringArray(raw?.conexiones ?? raw?.connections ?? raw?.connection_ids) ?? [];
+  const ejes = normalizeStringArray(raw?.ejesDetectados ?? raw?.ejes_detectados ?? raw?.ejes ?? raw?.axes) ?? [];
+  const capital = normalizeStringArray(
+    raw?.capitalSimbolicoDetectado ?? raw?.capital_simbolico_detectado ?? raw?.capitalSimbolico ?? raw?.symbolic_capital
+  ) ?? [];
+  const estados = normalizeEstados(raw?.estadosResonancia ?? raw?.resonancia_estados ?? raw?.resonance_states) ?? [];
+
+  const volumenBase = coerceNumber(raw?.volumen ?? raw?.volume ?? raw?.volumen_total ?? raw?.total_volume);
+  const volumeAlt = coerceNumber(raw?.volume ?? raw?.volumen);
+  const volumen = volumenBase ?? volumeAlt ?? 0;
+  const lastTs = normalizeDate(raw?.last_ts ?? raw?.lastSeen ?? raw?.last_seen ?? raw?.updated_at ?? raw?.last_update ?? raw?.lastUpdate);
+
+  const oportunidadRaw = coerceNumber(raw?.oportunidad ?? raw?.opportunity ?? raw?.oportunidad_score ?? raw?.oportunidadIndex);
+  const engagement = coerceNumber(raw?.engagement ?? raw?.engagement_rate ?? raw?.engagement_pct ?? raw?.tasa_engagement) ?? 0;
+
+  const universeId = firstString(raw?.universeId, raw?.universe_id, raw?.universoId, raw?.universo_id);
+  const universeLabel = firstString(raw?.universeLabel, raw?.universe_label, raw?.universoLabel, raw?.universo_label);
+  const universePilar = firstString(raw?.universePilar, raw?.universe_pilar, raw?.universoPilar, raw?.universo_pilar);
+  const universeConfianza = coerceNumber(raw?.universeConfianza ?? raw?.universe_confianza ?? raw?.universoConfianza ?? raw?.universo_confianza);
+  const universeColor = firstString(raw?.universeColor, raw?.universe_color, raw?.universoColor, raw?.universo_color);
+  const universeSize = coerceNumber(raw?.universeSize ?? raw?.universe_size ?? raw?.universoSize ?? raw?.universo_size);
+
+  const baseForScore: Topico = {
+    ...(raw as Topico),
+    sentimiento: sentimiento ?? {},
+    emociones: emociones ?? {},
+  };
+
+  return {
+    ...(raw as Topico),
+    id: firstString(raw?.id, raw?.id_conversacion, raw?.id_topico, raw?.topic_id) ?? `topico_${idx + 1}`,
+    nombre: firstString(raw?.nombre, raw?.topic, raw?.name) ?? `Tópico ${idx + 1}`,
+    volumen,
+    volume: volumeAlt ?? undefined,
+    categoria: firstString(raw?.categoria, raw?.category, raw?.categoria_topico) ?? (raw as Topico)?.categoria,
+    last_ts: lastTs ?? (raw as Topico)?.last_ts,
+    sentimiento: sentimiento ?? { positivo: 0, neutral: 0, negativo: 0 },
+    emociones: emociones ?? {},
+    conexiones,
+    coords: coords ?? undefined,
+    x: coords?.x ?? coerceNumber(raw?.x) ?? undefined,
+    y: coords?.y ?? coerceNumber(raw?.y) ?? undefined,
+    ejesDetectados: ejes,
+    capitalSimbolicoDetectado: capital,
+    estadosResonancia: estados,
+    oportunidad: oportunidadRaw ?? deriveOportunidad(baseForScore),
+    engagement,
+    nseInferido: firstString(raw?.nseInferido, raw?.nse_inferido, raw?.nse) ?? undefined,
+    contextoTerritorial: firstString(raw?.contextoTerritorial, raw?.contexto_territorial, raw?.territorio, raw?.contexto) ?? undefined,
+    universeId: universeId ?? undefined,
+    universeLabel: universeLabel ?? undefined,
+    universePilar: universePilar ?? undefined,
+    universeConfianza: universeConfianza ?? undefined,
+    universeColor: universeColor ?? undefined,
+    universeSize: universeSize ?? undefined,
+  };
+}
+
 
 /** ====== Data fetch robusto con fallback ====== */
 async function fetchTopicos(signal: AbortSignal): Promise<Topico[]> {
@@ -441,16 +941,7 @@ export default function TopicosPage() {
       setLoading(true); setError(null);
       try {
         const data = await fetchTopicos(ctr.signal);
-        const safe = data.map((t, i) => ({
-          ...t,
-          nombre: t.nombre || `Tópico ${i+1}`,
-          ejesDetectados: t.ejesDetectados ?? [],
-          capitalSimbolicoDetectado: t.capitalSimbolicoDetectado ?? [],
-          sentimiento: t.sentimiento ?? { positivo: 0, neutral: 0, negativo: 0 },
-          emociones: t.emociones ?? {},
-          oportunidad: t.oportunidad ?? deriveOportunidad(t),
-          engagement: t.engagement ?? 0,
-        }));
+        const safe = data.map((t, i) => prepareTopico(t, i));
 
         setRows(safe);
       } catch (e: any) {
@@ -507,7 +998,73 @@ export default function TopicosPage() {
     return () => ro.disconnect();
   }, []);
 
-  const nodos = useMemo(() => layoutPorUniversos(topicosFiltrados, box.w, box.h), [topicosFiltrados, box]);
+const { nodes: graphNodes, links: graphLinks } = useForceGraph(topicosFiltrados, box.w, box.h);
+  const [hoverNodeId, setHoverNodeId] = useState<string | null>(null);
+  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
+  const [tooltip, setTooltip] = useState<{ node: GraphDisplayNode; x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    setHoverNodeId(null);
+    setActiveNodeId(null);
+    setTooltip(null);
+  }, [topicosFiltrados]);
+
+  const nodeIndex = useMemo(() => {
+    const map = new Map<string, GraphDisplayNode>();
+    graphNodes.forEach((node) => map.set(node.id, node));
+    return map;
+  }, [graphNodes]);
+
+  const conexionesMap = useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    graphLinks.forEach((link) => {
+      if (!map.has(link.source)) map.set(link.source, new Set());
+      if (!map.has(link.target)) map.set(link.target, new Set());
+      map.get(link.source)!.add(link.target);
+      map.get(link.target)!.add(link.source);
+    });
+    return map;
+  }, [graphLinks]);
+
+  const highlightedNodeId = activeNodeId ?? hoverNodeId ?? null;
+
+  const highlightedNodes = useMemo(() => {
+    if (!highlightedNodeId) return new Set<string>();
+    const related = new Set<string>([highlightedNodeId]);
+    const neighbours = conexionesMap.get(highlightedNodeId);
+    neighbours?.forEach((id) => related.add(id));
+    return related;
+  }, [conexionesMap, highlightedNodeId]);
+
+  const tooltipSentiment = useMemo(() => (tooltip ? dominantSentiment(tooltip.node) : null), [tooltip]);
+  const tooltipPalette = useMemo(() => (tooltipSentiment ? sentimentPalette(tooltipSentiment.label) : null), [tooltipSentiment]);
+  const tooltipOpportunity = useMemo(() => {
+    if (!tooltip) return null;
+    const value = Number(tooltip.node.oportunidad);
+    if (Number.isFinite(value) && value > 0) return Math.round(value);
+    return deriveOportunidad(tooltip.node);
+  }, [tooltip]);
+  const tooltipConnections = tooltip?.node.conexiones?.length ?? 0;
+
+  const handleNodeMouseEnter = (node: GraphDisplayNode) => {
+    setHoverNodeId(node.id);
+    setTooltip({ node, x: node.x, y: node.y });
+  };
+
+  const handleNodeMouseLeave = (node: GraphDisplayNode) => {
+    setHoverNodeId((current) => (current === node.id ? null : current));
+    setTooltip((current) => {
+      if (!current) return current;
+      if (current.node.id !== node.id) return current;
+      if (activeNodeId && activeNodeId === node.id) return current;
+      return null;
+    });
+  };
+
+  const handleGraphBackgroundClick = () => {
+    setActiveNodeId(null);
+    if (!hoverNodeId) setTooltip(null);
+  };
 
   const abrirModal = (topico: Topico) => {
     setTopicoSeleccionado(topico);
@@ -515,6 +1072,13 @@ export default function TopicosPage() {
   };
 
   const cerrarModal = () => { setModalAbierto(false); setTopicoSeleccionado(null); };
+
+    const handleNodeClick = (event: ReactMouseEvent<SVGGElement>, node: GraphDisplayNode) => {
+    event.stopPropagation();
+    setActiveNodeId(node.id);
+    setTooltip({ node, x: node.x, y: node.y });
+    abrirModal(node);
+  };
 
   const handleMouseEnterALMA = () => {
     const timeout = setTimeout(() => { setMostrarTooltipALMA(true); }, 1000);
@@ -676,33 +1240,149 @@ export default function TopicosPage() {
                 </div>
               </div>
               
-              {/* AJUSTE: Contenedor con ref para el layout dinámico */}
               <div ref={refContenedor} className="relative w-full min-h-[700px] bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-                {/* AJUSTE: Renderizar los nodos calculados por el nuevo layout */}
-                {nodos.map((t: any) => (
-                    <div
-                        key={t.id}
-                        className="absolute cursor-pointer transition-all duration-300 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-50 to-indigo-50 shadow-lg border border-gray-200 text-center p-2 hover:scale-110"
-                        style={{
-                            left: `${t.px}px`,
-                            top: `${t.py}px`,
-                            transform: "translate(-50%, -50%)",
-                            width: `${t.size}px`,
-                            height: `${t.size}px`,
-                        }}
-                        title={`${t.nombre} • Volumen: ${Math.max(0, Number(t.volumen ?? t.volume ?? 0))}`}
-                        onClick={() => abrirModal(t)}
-                    >
-                        <div className="px-2">
-                            <div className="text-xs font-medium text-gray-700 line-clamp-2 break-words">
-                                {t.nombre}
-                            </div>
-                            <div className="text-[10px] text-gray-500 mt-1">
-                                {Math.max(0, Number(t.volumen ?? t.volume ?? 0)).toLocaleString('es-MX')} menciones
-                            </div>
-                        </div>
+                {graphNodes.length === 0 ? (
+                  <div className="absolute inset-0 flex items-center justify-center text-sm text-gray-500">
+                    {rows.length === 0
+                      ? 'Cargando grafo de tópicos...'
+                      : 'No encontramos tópicos que coincidan con los filtros seleccionados.'}
+                  </div>
+                ) : (
+                  <svg
+                    width="100%"
+                    height="100%"
+                    viewBox={`0 0 ${Math.max(box.w, 1)} ${Math.max(box.h, 1)}`}
+                    preserveAspectRatio="xMidYMid meet"
+                    className="text-gray-700"
+                    onClick={handleGraphBackgroundClick}
+                  >
+                    <rect width={box.w} height={box.h} fill="transparent" />
+                    {graphLinks.map((link) => {
+                      const source = nodeIndex.get(link.source);
+                      const target = nodeIndex.get(link.target);
+                      if (!source || !target) return null;
+                      const edgeHighlighted = highlightedNodeId
+                        ? highlightedNodes.has(source.id) && highlightedNodes.has(target.id)
+                        : false;
+                      return (
+                        <line
+                          key={`${link.source}-${link.target}`}
+                          x1={source.x}
+                          y1={source.y}
+                          x2={target.x}
+                          y2={target.y}
+                          stroke={edgeHighlighted ? '#6366f1' : '#d1d5db'}
+                          strokeWidth={edgeHighlighted ? 2.4 : 1.1}
+                          strokeOpacity={highlightedNodeId && !edgeHighlighted ? 0.2 : 0.55}
+                          className="transition-all duration-200"
+                          onClick={(event) => event.stopPropagation()}
+                        />
+                      );
+                    })}
+                    {graphNodes.map((node) => {
+                      const sentiment = dominantSentiment(node);
+                      const palette = sentimentPalette(sentiment.label);
+                      const isActive = highlightedNodes.has(node.id);
+                      const isDimmed = highlightedNodeId ? !isActive : false;
+                      const maxChars = Math.max(12, Math.floor(node.radius / 3));
+                      const labelLines = wrapLabel(node.nombre, maxChars);
+                      const labelStart = -((labelLines.length - 1) * 6);
+                      return (
+                        <g
+                          key={node.id}
+                          transform={`translate(${node.x}, ${node.y})`}
+                          className="cursor-pointer"
+                          onMouseEnter={() => handleNodeMouseEnter(node)}
+                          onMouseLeave={() => handleNodeMouseLeave(node)}
+                          onClick={(event) => handleNodeClick(event, node)}
+                        >
+                          <circle
+                            r={node.radius}
+                            fill={palette.fill}
+                            stroke={isActive ? '#6366f1' : palette.stroke}
+                            strokeWidth={isActive ? 2.6 : 1.5}
+                            opacity={isDimmed ? 0.35 : 0.9}
+                            className="transition-all duration-200"
+                          />
+                          {labelLines.map((line, index) => (
+                            <text
+                              key={`${node.id}-label-${index}`}
+                              y={labelStart + index * 12}
+                              textAnchor="middle"
+                              fontSize={Math.max(10, Math.min(14, node.radius / 3))}
+                              fontWeight={600}
+                              fill="#1f2937"
+                              style={{ pointerEvents: 'none' }}
+                            >
+                              {line}
+                            </text>
+                          ))}
+                          <text
+                            y={labelStart + labelLines.length * 12}
+                            textAnchor="middle"
+                            fontSize={Math.max(9, Math.min(12, node.radius / 4.2))}
+                            fill="#4b5563"
+                            style={{ pointerEvents: 'none' }}
+                          >
+                            {getTopicoVolume(node).toLocaleString('es-MX')} menciones
+                          </text>
+                        </g>
+                      );
+                    })}
+                  </svg>
+                )}
+                {tooltip && (
+                  <div
+                    className="absolute z-20 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-xl rounded-lg px-4 py-3 w-64 pointer-events-none"
+                    style={{
+                      left: tooltip.x,
+                      top: tooltip.y,
+                      transform: 'translate(-50%, calc(-100% - 18px))',
+                    }}
+                  >
+                    <div className="text-sm font-semibold text-gray-900 leading-snug">
+                      {tooltip.node.nombre ?? 'Sin título'}
                     </div>
-                ))}
+                    <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-gray-500">
+                      <div>
+                        <div className="uppercase tracking-wide text-[10px] text-gray-400">Sentimiento</div>
+                        <div className="mt-1 flex items-center space-x-2">
+                          <span
+                            className="w-2.5 h-2.5 rounded-full"
+                            style={{ backgroundColor: tooltipPalette?.stroke ?? '#9ca3af' }}
+                          ></span>
+                          <span className="text-sm font-semibold text-gray-800">
+                            {tooltipSentiment ? SENTIMENT_LABELS[tooltipSentiment.label] : 'Sin dato'}
+                          </span>
+                        </div>
+                        <div className="text-sm font-medium text-gray-700">
+                          {tooltipSentiment ? `${tooltipSentiment.value}%` : '—'}
+                        </div>
+                                              </div>
+                      <div>
+                        <div className="uppercase tracking-wide text-[10px] text-gray-400">Volumen</div>
+                        <div className="text-sm font-semibold text-gray-800">
+                          {getTopicoVolume(tooltip.node).toLocaleString('es-MX')}
+                        </div>
+                        <div className="text-[11px] text-gray-500">menciones</div>
+                      </div>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+                      <span>Oportunidad</span>
+                      <span className="text-sm font-semibold text-indigo-600">
+                        {tooltipOpportunity !== null ? `${tooltipOpportunity}%` : '—'}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-xs text-gray-500">
+                      {tooltipConnections > 0
+                        ? `${tooltipConnections} conexiones activas`
+                        : 'Sin conexiones registradas'}
+                    </div>
+                    
+                      <div className="absolute left-1/2 -bottom-1.5 h-3 w-3 rotate-45 border-r border-b border-gray-200 bg-white/90 -translate-x-1/2" />
+                  </div>
+                )}
+
               </div>
             </div>
           </div>
