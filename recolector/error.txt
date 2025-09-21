@@ -1,0 +1,1 @@
+RuntimeError: Falta campo 'data' en el JSON. Este doc_id no es de comentarios por shortcode. En DevTools/Preview debes ver 'data.shortcode_media.edge_media_to_parent_comment'. Usa el doc_id de ESA petición.

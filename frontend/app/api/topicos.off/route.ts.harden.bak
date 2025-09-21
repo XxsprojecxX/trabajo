@@ -1,0 +1,133 @@
+// app/api/topicos/route.ts (BigQuery real con SA)
+import { NextResponse, NextRequest } from 'next/server';
+import { BigQuery } from '@google-cloud/bigquery';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const runtime = 'nodejs';
+
+type Intensidad = 'alta' | 'media' | 'baja';
+
+export interface Topico {
+  id: string;
+  nombre: string;
+  volumen: number;
+  sentimiento: { positivo: number; neutral: number; negativo: number };
+  emociones: {
+    alegria: number; enojo: number; sorpresa: number; miedo: number; tristeza: number;
+    nostalgia: number; ternura: number; orgullo: number; estres: number; culpa: number; cansancio: number;
+  };
+  engagement: number;
+  oportunidad: number;
+  x: number; y: number;
+  conexiones: string[];
+  categoria: string;
+  ejesDetectados: string[];
+  pilarAsociado: string;
+  capitalSimbolicoDetectado: string[];
+  nseInferido: string;
+  contextoTerritorial: string;
+  estadosResonancia: Array<{ estado: string; porcentaje: number; intensidad: Intensidad }>;
+}
+
+function normalize(raw: any, i: number): Topico {
+  const likes = Number(raw.likes ?? raw.like_count ?? 0);
+  const comments = Number(raw.comments_count ?? raw.comment_count ?? 0);
+  const volumen = likes + 3 * comments;
+
+  const pos = Math.min(95, Math.round(50 + likes * 0.0001));
+  const neg = Math.max(0, 100 - pos - 25);
+  const neu = Math.max(0, 100 - pos - neg);
+
+  return {
+    id: String(raw.post_id ?? raw.id ?? `post-${i}`),
+    nombre: String(raw.text ?? raw.caption ?? 'Tópico'),
+    volumen,
+    sentimiento: { positivo: pos, neutral: neu, negativo: neg },
+    emociones: {
+      alegria: 0, enojo: 0, sorpresa: 0, miedo: 0, tristeza: 0,
+      nostalgia: 0, ternura: 0, orgullo: 0, estres: 0, culpa: 0, cansancio: 0,
+    },
+    engagement: Number((likes + comments) / 1000),
+    oportunidad: 90 + ((i * 3) % 10),
+    x: 200 + ((i * 120) % 600),
+    y: 160 + ((i * 90) % 300),
+    conexiones: [],
+    categoria: String(raw.source ?? 'General'),
+    ejesDetectados: [],
+    pilarAsociado: 'ALMA',
+    capitalSimbolicoDetectado: [],
+    nseInferido: 'Mixto',
+    contextoTerritorial: String(raw.region ?? 'Mixto'),
+    estadosResonancia: [],
+  };
+}
+
+function normalizePilar(p: any): string {
+  if (!p || typeof p !== 'string') return '';
+  const k = p.trim().toLowerCase();
+  if (k === 'dairy of real moms') return 'Dairy of Real Moms';
+  if (k === 'recipes that hug') return 'Recipes that Hug';
+  if (k === 'real family moments') return 'Real Family Moments';
+  if (k === 'authentic treats') return 'Authentic Treats';
+  return '';
+}
+
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const limit = Math.min(Number(searchParams.get('limit') ?? 50), 200);
+
+    // Usa la Service Account definida en .env.local
+    const bq = new BigQuery({
+      projectId: 'galletas-piloto-ju-250726',
+      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS as string,
+    });
+
+    const query = `
+      SELECT
+        post_id,
+        account_id,
+        nickname,
+        followers,
+        text,
+        create_time,
+        post_url,
+        likes,
+        comments_count,
+        play_count,
+        post_type,
+        CAST(region AS STRING) AS region,
+        source
+      FROM \`galletas-piloto-ju-250726.gmx.vw_social_post_dashboard\`
+      ORDER BY create_time DESC
+      LIMIT @lim
+    `;
+
+    const [rows] = await bq.query({ query, params: { lim: limit }, location: 'US' });
+
+    const data: Topico[] = rows.map((r: any, i: number) => normalize(r, i));
+    return NextResponse.json(
+(() => {
+  const __payload = { count: data.length, rows: data };
+  const __keys = ['rows','items','data'];
+  for (const k of __keys) {
+    const arr = (__payload as any)[k];
+    if (Array.isArray(arr)) {
+      (__payload as any)[k] = arr.map((r:any) => {
+        const p = r.pilarAsociado ?? r.pilar ?? r.pilar_asociado ?? r.pilarNormalizado ?? r.pilar_normalizado ?? r.pilar_normalizado ?? r.pilar_normalizado;
+        const pn = normalizePilar(p);
+        return { ...r, pilarAsociado: pn };
+      });
+      break;
+    }
+  }
+  // marcador interno para no aplicar doble
+  (__payload as any).__GMX_PILAR_NORMALIZED__ = true;
+  return __payload;
+})());
+  } catch (e: any) {
+    return NextResponse.json({ count: 0, rows: [], error: e?.message || String(e) }, { status: 200 });
+  }
+}

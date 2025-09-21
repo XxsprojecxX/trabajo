@@ -1,0 +1,986 @@
+ 'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+
+/** Tipado laxo y opcional: nada rompe si falta */
+type Sentimiento = { positivo?: number; neutral?: number; negativo?: number };
+type Emociones = Partial<Record<
+  | 'alegria' | 'enojo' | 'sorpresa' | 'miedo' | 'tristeza'
+  | 'nostalgia' | 'ternura' | 'orgullo' | 'estres' | 'culpa' | 'cansancio',
+  number
+>>;
+type EstadoResonancia = { estado: string; porcentaje: number; intensidad: 'alta'|'media'|'baja' };
+
+export interface Topico {
+  id: string;
+  nombre?: string;
+  volumen?: number;   // fuente BigQuery v2
+  volume?: number;    // otras fuentes
+  sentimiento?: Sentimiento;
+  emociones?: Emociones;
+  engagement?: number;
+  oportunidad?: number;
+  categoria?: string;
+  ejesDetectados?: string[];
+  pilarAsociado?: string; // mayúsculas
+  pilar?: string;         // variantes
+  capitalSimbolicoDetectado?: string[];
+  nseInferido?: string;
+  contextoTerritorial?: string;
+  estadosResonancia?: EstadoResonancia[];
+  coords?: { x?: number; y?: number };
+  x?: number;
+  y?: number;
+  conexiones?: string[];
+}
+
+/** ====== Metadatos de Pilares (según info provista) ====== */
+type PilarMeta = {
+  nombre: string;
+  descripcion: string;
+  ejes: string[];
+  kpis: string[];
+  estado: 'Activo' | 'Oportunidad' | 'Emergente';
+  activacion: number; // %
+  extras?: Record<string, unknown>;
+};
+
+const PILARES: Record<string, PilarMeta> = {
+  'DIARY OF REAL MOMS': {
+    nombre: 'DIARY OF REAL MOMS',
+    descripcion: 'Contenido enfocado en experiencia personal, anécdotas, confesiones y testimonios de la maternidad.',
+    ejes: ['Narrativo', 'Emocional'],
+    kpis: ['Testimonios auténticos', 'Engagement emocional', 'Storytime resonance'],
+    estado: 'Activo',
+    activacion: 85,
+  },
+  'REAL FAMILY MOMENTS': {
+    nombre: 'REAL FAMILY MOMENTS',
+    descripcion: 'Interacciones y rituales familiares donde el producto está presente.',
+    ejes: ['Simbólico', 'Comunitario'],
+    kpis: ['Rituales familiares', 'Tradiciones heredadas', 'Conexión intergeneracional'],
+    estado: 'Oportunidad',
+    activacion: 72,
+  },
+  'AUTHENTIC TREATS': {
+    nombre: 'AUTHENTIC TREATS',
+    descripcion: 'El producto como elemento de placer, consuelo o recompensa.',
+    ejes: ['Sensorial', 'Emocional'],
+    kpis: ['Experiencia sensorial', 'Momentos de placer', 'Confort emocional'],
+    estado: 'Activo',
+    activacion: 68,
+  },
+  'MINDFUL NOURISHMENT': {
+    nombre: 'MINDFUL NOURISHMENT',
+    descripcion: 'Alimentación consciente conectada con bienestar integral y valores familiares.',
+    ejes: ['Territorial', 'Simbólico'],
+    kpis: ['Alimentación consciente', 'Valores nutricionales', 'Bienestar integral'],
+    estado: 'Oportunidad',
+    activacion: 65,
+  },
+  'RECIPES THAT HUG': {
+    nombre: 'RECIPES THAT HUG',
+    descripcion: 'Cocina emocional + intuitiva + gestión familiar. Pilar emergente de alta resonancia.',
+    ejes: ['Narrativo', 'Comunitario', 'Simbólico', 'Sensorial'],
+    kpis: ['Cocina emocional (91%)', 'Intuitiva (88%)', 'Gestión familiar (90%)'],
+    estado: 'Emergente',
+    activacion: 78,
+    extras: { cocinaEmocional: 91, cocinaIntuitiva: 88, gestionFamiliar: 90 },
+  },
+};
+
+/** Helpers de normalización/labels */
+function PilarLabel(p?: string) {
+  if (!p) return '';
+  const k = p.trim().toLowerCase();
+  if (k === 'dairy of real moms' || k === 'diary of real moms') return 'DIARY OF REAL MOMS';
+  if (k === 'recipes that hug') return 'RECIPES THAT HUG';
+  if (k === 'real family moments') return 'REAL FAMILY MOMENTS';
+  if (k === 'authentic treats') return 'AUTHENTIC TREATS';
+  if (k === 'mindful nourishment') return 'MINDFUL NOURISHMENT';
+  return p.toUpperCase();
+}
+function getPilarMeta(p?: string): PilarMeta | null {
+  const key = PilarLabel(p || '');
+  return PILARES[key] ?? null;
+}
+
+/** ====== Utilidades de layout seguro (si faltan coords) ====== */
+function gridPos(i: number) {
+  const cols = 6;
+  const gutter = 160;
+  const r = Math.floor(i / cols), c = i % cols;
+  return { x: 140 + c * gutter, y: 140 + r * gutter };
+}
+const clamp = (v:number,min=0,max=100)=>Math.max(min,Math.min(max,v));
+
+/** Fórmula reproducible de oportunidad si falta (no pisa datos reales) */
+function deriveOportunidad(t: Topico) {
+  const s = t.sentimiento ?? {};
+  const emo = t.emociones ?? {};
+  const pos = s.positivo ?? 0;
+  const ternura = emo.ternura ?? 0;
+  const nostalgia = emo.nostalgia ?? 0;
+  const stressInv = 100 - (emo.estres ?? 0);
+  const eng = t.engagement ?? 0; // 0–100 si viniera así, si viene 0–10 se ajusta abajo
+  const engPct = eng > 1 ? eng : eng * 10; // si viniera 8.4 -> 84%
+  const score = (pos * 0.55) + ((ternura + nostalgia) * 0.15) + (stressInv * 0.1) + (engPct * 0.2);
+  return Math.round(clamp(score));
+}
+
+function withSafeLayout(rows: Topico[]) {
+  return rows.map((t, i) => {
+    const v = (t.volume ?? t.volumen ?? 1);
+    const size = Math.max(48, Math.min(120, Math.sqrt(v) * 10));
+    const px = (t.coords?.x ?? t.x ?? gridPos(i).x);
+    const py = (t.coords?.y ?? t.y ?? gridPos(i).y);
+    const oportunidad = t.oportunidad ?? deriveOportunidad(t);
+    const engagement = t.engagement ?? 0;
+    return { ...t, px, py, size, oportunidad, engagement } as Topico & { px: number; py: number; size: number; oportunidad: number; engagement: number };
+  });
+}
+
+/** ====== Data fetch robusto con fallback ====== */
+const SAMPLE_TOPICOS: Topico[] = [
+  {
+    id: '3',
+    nombre: 'Conexión Auténtica Intergeneracional',
+    volumen: 18900,
+    sentimiento: { positivo: 72, neutral: 22, negativo: 6 },
+    emociones: { alegria: 45, enojo: 3, sorpresa: 20, miedo: 7, tristeza: 12, nostalgia: 55, ternura: 65, orgullo: 50, estres: 15, culpa: 8, cansancio: 18 },
+    engagement: 7.8,
+    pilarAsociado: 'MINDFUL NOURISHMENT',
+    ejesDetectados: ['Narrativo', 'Territorial', 'Emocional'],
+    categoria: 'Vínculos Familiares',
+    estadosResonancia: [
+      { estado: 'Michoacán', porcentaje: 15.8, intensidad: 'alta' },
+      { estado: 'Oaxaca', porcentaje: 13.2, intensidad: 'alta' },
+      { estado: 'Puebla', porcentaje: 12.7, intensidad: 'alta' },
+    ],
+    conexiones: ['2', '6'],
+    x: 700, y: 180,
+  },
+];
+
+async function fetchTopicos(signal: AbortSignal): Promise<Topico[]> {
+  const url = '/api/topicos?limit=120';
+  try {
+    const res = await fetch(url, { signal, cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json().catch(() => ({}));
+    const rows: Topico[] = Array.isArray(data?.items) ? data.items : (Array.isArray(data) ? data : []);
+    if (rows.length === 0) throw new Error('API vacía');
+    return rows;
+  } catch {
+    return SAMPLE_TOPICOS; // fallback: no rompemos la UI
+  }
+}
+
+/** ====== Componente principal ====== */
+
+interface PalabraCloud {
+  palabra: string;
+  topico: string;
+  volumen: number;
+  sentimiento: number;
+  menciones: string[];
+  contextos: string[];
+  insights: string[];
+}
+
+export default function TopicosPage() {
+  const [filtroSentimiento, setFiltroSentimiento] = useState('todos');
+  const [filtroVolumen, setFiltroVolumen] = useState('todos');
+
+  const [rows, setRows] = useState<(Topico & { px?: number; py?: number; size?: number; oportunidad?: number; engagement?: number })[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [topicoSeleccionado, setTopicoSeleccionado] = useState<Topico | (Topico & { px?: number; py?: number; size?: number; oportunidad?: number; engagement?: number }) | null>(null);
+  const [modalAbierto, setModalAbierto] = useState(false);
+
+  const [mostrarExplicacionALMA, setMostrarExplicacionALMA] = useState(false);
+  const [mostrarTooltipALMA, setMostrarTooltipALMA] = useState(false);
+  const [timeoutTooltip, setTimeoutTooltip] = useState<NodeJS.Timeout | null>(null);
+
+  const [palabraSeleccionada, setPalabraSeleccionada] = useState<PalabraCloud | null>(null);
+  const [mostrarModalPalabra, setMostrarModalPalabra] = useState(false);
+
+  // Carga de datos (vivos) + fallback
+  useEffect(() => {
+    const ctr = new AbortController();
+    (async () => {
+      setLoading(true); setError(null);
+      try {
+        const data = await fetchTopicos(ctr.signal);
+        const safe = data.map((t, i) => ({
+          conexiones: [],
+          ...t,
+          nombre: t.nombre || `Tópico ${i+1}`,
+          ejesDetectados: t.ejesDetectados ?? [],
+          capitalSimbolicoDetectado: t.capitalSimbolicoDetectado ?? [],
+          sentimiento: t.sentimiento ?? { positivo: 0, neutral: 0, negativo: 0 },
+          emociones: t.emociones ?? {},
+        }));
+        setRows(withSafeLayout(safe));
+      } catch (e: any) {
+        setError(e?.message ?? 'Error de carga');
+        setRows(withSafeLayout(SAMPLE_TOPICOS));
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => ctr.abort();
+  }, []);
+
+  const handlePalabraClick = (palabra: string) => {
+    const palabraData: PalabraCloud = {
+      palabra,
+      topico: palabra === 'creatividad' ? 'Escape Creativo Familiar' : 'Performance vs Realidad Maternal',
+      volumen: palabra === 'creatividad' ? 12850 : 15420,
+      sentimiento: palabra === 'creatividad' ? 78 : 72,
+      menciones: palabra === 'creatividad'
+        ? [
+            `La ${palabra} es nuestro refugio familiar`,
+            `${palabra} que une generaciones en casa`,
+            `Mi espacio de ${palabra} con los niños`,
+            `${palabra} auténtica, sin presión de perfección`,
+            `Momentos de ${palabra} pura con mi familia`,
+          ]
+        : [
+            `La ${palabra} auténtica no necesita filtros`,
+            `${palabra} real vs ${palabra} de Instagram`,
+            `Mi ${palabra} imperfecta pero verdadera`,
+          ],
+      contextos: palabra === 'creatividad'
+        ? ['Actividades familiares','Arte doméstico','Tiempo de calidad','Tradiciones creativas','Proyectos intergeneracionales']
+        : ['Redes sociales','Conversaciones familiares','Blogs maternales'],
+      insights: palabra === 'creatividad'
+        ? [
+            `Alta resonancia emocional con ${palabra} familiar`,
+            'Escape positivo del estrés maternal',
+            'Conexión intergeneracional a través del arte',
+            'Capital cultural transmitido de forma natural',
+            'Terapia familiar sin etiquetas formales',
+          ]
+        : [
+            `Alta resonancia emocional con ${palabra}`,
+            'Tendencia anti-performance dominante',
+            'Búsqueda de autenticidad maternal',
+          ],
+    };
+    setPalabraSeleccionada(palabraData);
+    setMostrarModalPalabra(true);
+  };
+
+  // Filtros (compatibles con campos opcionales)
+  const topicosFiltrados = useMemo(() => {
+    const base = rows;
+    return base.filter((topico) => {
+      const s = topico.sentimiento ?? { positivo: 0, neutral: 0, negativo: 0 };
+      const vol = (topico.volumen ?? topico.volume ?? 0);
+
+      const cumpleSentimiento =
+        filtroSentimiento === 'todos' ||
+        (filtroSentimiento === 'positivo' && (s.positivo ?? 0) > 60) ||
+        (filtroSentimiento === 'neutral' && (s.neutral ?? 0) > 30) ||
+        (filtroSentimiento === 'negativo' && (s.negativo ?? 0) > 10);
+
+      const cumpleVolumen =
+        filtroVolumen === 'todos' ||
+        (filtroVolumen === 'alto' && vol > 15000) ||
+        (filtroVolumen === 'medio' && vol >= 10000 && vol <= 15000) ||
+        (filtroVolumen === 'bajo' && vol < 10000);
+
+      return cumpleSentimiento && cumpleVolumen;
+    });
+  }, [rows, filtroSentimiento, filtroVolumen]);
+
+  const obtenerColorSentimiento = (sentimiento?: Sentimiento) => {
+    const s = sentimiento ?? { positivo: 0, neutral: 0, negativo: 0 };
+    if ((s.positivo ?? 0) > 60) return 'from-green-400 to-green-600';
+    if ((s.negativo ?? 0) > 15) return 'from-red-400 to-red-600';
+    return 'from-yellow-400 to-yellow-600';
+  };
+
+  const obtenerTamaño = (volumen: number) => {
+    if (volumen > 15000) return 'w-20 h-20';
+    if (volumen > 10000) return 'w-16 h-16';
+    return 'w-12 h-12';
+  };
+
+  const abrirModal = (topico: Topico | (Topico & { px?: number; py?: number; size?: number; oportunidad?: number; engagement?: number })) => {
+    setTopicoSeleccionado(topico);
+    setModalAbierto(true);
+  };
+
+  const cerrarModal = () => { setModalAbierto(false); setTopicoSeleccionado(null); };
+
+  const handleMouseEnterALMA = () => {
+    const timeout = setTimeout(() => { setMostrarTooltipALMA(true); }, 1000);
+    setTimeoutTooltip(timeout as unknown as NodeJS.Timeout);
+  };
+  const handleMouseLeaveALMA = () => {
+    if (timeoutTooltip) { clearTimeout(timeoutTooltip); setTimeoutTooltip(null); }
+    setMostrarTooltipALMA(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Link href="/" className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <i className="ri-brain-line text-white text-xl"></i>
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900">Content Insight</h1>
+              </Link>
+            </div>
+            <nav className="flex items-center space-x-6">
+              <Link href="/" className="text-gray-600 hover:text-blue-600 transition-colors">Inicio</Link>
+              <Link href="/topicos" className="text-blue-600 font-semibold">Tópicos</Link>
+              <Link href="/contenidos" className="text-gray-600 hover:text-blue-600 transition-colors">Contenidos</Link>
+              <Link href="/insights" className="text-gray-600 hover:text-blue-600 transition-colors">Insights</Link>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Tópicos de Conversación</h1>
+          <p className="text-xl text-gray-600 mb-6">
+            Análisis territorial basado en el ALMA: 6 ejes técnicos detectando patrones maternos auténticos
+          </p>
+
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="flex flex-wrap gap-4">
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium text-gray-700">Sentimiento:</label>
+                  <select
+                    value={filtroSentimiento}
+                    onChange={(e) => setFiltroSentimiento(e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-8"
+                  >
+                    <option value="todos">Todos</option>
+                    <option value="positivo">Positivo</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="negativo">Negativo</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium text-gray-700">Volumen:</label>
+                  <select
+                    value={filtroVolumen}
+                    onChange={(e) => setFiltroVolumen(e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-8"
+                  >
+                    <option value="todos">Todos</option>
+                    <option value="alto">Alto (&gt;15K)</option>
+                    <option value="medio">Medio (10K-15K)</option>
+                    <option value="bajo">Bajo (&lt;10K)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                  <span>ALMA Detectado</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span>Alta Oportunidad</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+                  <span>RECIPES THAT HUG</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ====== MAPA DE UNIVERSOS ====== */}
+        <div className="grid lg:grid-cols-4 gap-8">
+          <div className="lg:col-span-4">
+            <div className="bg-white rounded-xl shadow-sm p-6 h-[700px] relative overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <div className="relative">
+                  <h3
+                    className="text-lg font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors flex items-center"
+                    onClick={() => setMostrarExplicacionALMA(true)}
+                    onMouseEnter={handleMouseEnterALMA}
+                    onMouseLeave={handleMouseLeaveALMA}
+                  >
+                    <i className="ri-question-line text-blue-600 mr-2"></i>
+                    Mapa de Universos de Contenido (Análisis ALMA)
+                  </h3>
+                  {mostrarTooltipALMA && (
+                    <div className="absolute top-full left-0 mt-2 w-80 bg-gray-900 text-white text-sm rounded-lg shadow-xl p-4 z-50 animate-in fade-in duration-200">
+                      <div className="space-y-3">
+                        <div><span className="font-semibold text-pink-300">Emocional:</span><span className="ml-1">Mapas auténticos (culpa, ternura, agotamiento)</span></div>
+                        <div><span className="font-semibold text-blue-300">Narrativo:</span><span className="ml-1">Historias genuinas vs performance</span></div>
+                        <div><span className="font-semibold text-purple-300">Simbólico:</span><span className="ml-1">Capital (cultural, económico, social)</span></div>
+                        <div><span className="font-semibold text-orange-300">Territorial:</span><span className="ml-1">Contextos geo-sociales</span></div>
+                        <div><span className="font-semibold text-green-300">Comunitario:</span><span className="ml-1">Redes y vínculos</span></div>
+                        <div><span className="font-semibold text-teal-300">Sensorial:</span><span className="ml-1">Experiencia sensorial</span></div>
+                      </div>
+                      <div className="absolute -top-2 left-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-gray-900"></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="relative w-full h-full">
+                {/* Conexiones entre nodos */}
+                <svg width="100%" height="100%" className="absolute inset-0">
+                  {topicosFiltrados.map((a) =>
+                    (a.conexiones ?? []).map((bid) => {
+                      const b = topicosFiltrados.find((t) => t.id === bid);
+                      if (!b || a.id === b.id) return null;
+                      const ax = Number((a as any).px), ay = Number((a as any).py);
+                      const bx = Number((b as any).px), by = Number((b as any).py);
+                      return (
+                        <line key={`${a.id}-${bid}`} x1={ax} y1={ay} x2={bx} y2={by} stroke="#e5e7eb" strokeWidth="2" opacity="0.6" />
+                      );
+                    })
+                  )}
+                </svg>
+
+                {/* Nodos */}
+                {topicosFiltrados.map((topico) => {
+                  const vol = (topico.volumen ?? topico.volume ?? 0);
+                  const px = Number((topico as any).px), py = Number((topico as any).py);
+                  const sizeClass = obtenerTamaño(vol);
+                  return (
+                    <div
+                      key={topico.id}
+                      className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300 hover:scale-110 ${sizeClass}`}
+                      style={{ left: px, top: py }}
+                      onClick={() => abrirModal(topico)}
+                      title={`${PilarLabel(topico.pilarAsociado ?? topico.pilar ?? 'PILAR ESTRATÉGICO')} • Volumen: ${vol}`}
+                    >
+                      <div
+                        className={`w-full h-full rounded-full bg-gradient-to-br ${obtenerColorSentimiento(topico.sentimiento)} flex items-center justify-center shadow-lg ${
+                          PilarLabel(topico.pilarAsociado ?? topico.pilar) === 'RECIPES THAT HUG' ? 'ring-4 ring-orange-300' : ''
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-white font-bold text-xs">{(topico as any).oportunidad ?? 0}%</div>
+                        </div>
+                      </div>
+                      <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-medium text-gray-700 whitespace-nowrap bg-white px-2 py-1 rounded shadow-sm">
+                        {topico.nombre ?? '—'}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* ====== PANELES INFORMATIVOS ====== */}
+          <div className="lg:col-span-4 mt-8">
+            <div className="grid lg:grid-cols-2 gap-6">
+              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  <i className="ri-dna-line text-purple-600 mr-2"></i>
+                  Insights del ALMA - Simulación Completa
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-sm text-gray-700">
+                      <strong>RECIPES THAT HUG</strong> emerge como territorio dominante en Cocina Emocional (91%), Intuitiva (88%) y Gestión Familiar (90%).
+                    </p>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-sm text-gray-700">
+                      <strong>Convergencia detectada:</strong> Gestión culinaria familiar conecta performance maternal con soluciones prácticas.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pilares Estratégicos de Contenido */}
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  <i className="ri-flag-line text-green-600 mr-2"></i>
+                  Pilares Estratégicos de Contenido
+                </h3>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {Object.values(PILARES).map((p) => (
+                    <div key={p.nombre} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="font-semibold text-gray-900">{p.nombre}</div>
+                        <span className={`text-xs px-2 py-0.5 rounded ${p.estado==='Activo'?'bg-green-100 text-green-700':p.estado==='Oportunidad'?'bg-yellow-100 text-yellow-800':'bg-orange-100 text-orange-700'}`}>{p.estado}</span>
+                      </div>
+                      <div className="text-xs text-gray-600 mt-1">{p.descripcion}</div>
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="text-sm text-gray-700">Activación</div>
+                        <div className="text-sm font-bold text-purple-700">{p.activacion}%</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4 text-sm text-gray-700">
+                  <div className="flex items-center space-x-2">
+                    <i className="ri-dna-line text-purple-600"></i>
+                    <span>Análisis ALMA: 6 ejes técnicos procesando conversaciones auténticas</span>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-600">
+                  <span>Actualizado: En vivo</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ====== Modal Explicación ALMA ====== */}
+        {mostrarExplicacionALMA && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-indigo-700 px-8 py-6 rounded-t-2xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                      <i className="ri-dna-line text-white text-2xl"></i>
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">Sistema ALMA - Análisis Profundo</h2>
+                      <p className="text-purple-100">Arquitectura de 6 Ejes Técnicos</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setMostrarExplicacionALMA(false)} className="w-8 h-8 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 rounded-full transition-colors">
+                    <i className="ri-close-line text-xl"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-8 space-y-8">
+                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border-l-4 border-purple-500">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i className="ri-brain-line text-purple-600 mr-3"></i>
+                    ¿Qué es el Sistema ALMA?
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed">
+                    ALMA analiza contenido maternal con 6 ejes (emocional, narrativo, simbólico, territorial, comunitario y sensorial)
+                    para identificar oportunidades de contenido auténtico de alta resonancia.
+                  </p>
+                </div>
+              </div>
+
+              <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-8 py-4 rounded-b-2xl">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600">Sistema ALMA v1.1 • 6 Ejes Técnicos</div>
+                  <button onClick={() => setMostrarExplicacionALMA(false)} className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors whitespace-nowrap">
+                    <i className="ri-check-line mr-2"></i>
+                    Entendido
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ====== Modal de Tópico (VERSIÓN BLINDADA) ====== */}
+        {modalAbierto && topicoSeleccionado && (() => {
+          // --- Metadatos de pilares (según especificación) ---
+          const PILLAR_META: Record<string, {
+            nombre: string;
+            descripcion: string;
+            ejes: string[];
+            kpis: string[];
+            estado: 'Activo' | 'Oportunidad' | 'Emergente';
+            activacion?: number; // %
+            extras?: Record<string, any>;
+          }> = {
+            'DIARY OF REAL MOMS': {
+              nombre: 'DIARY OF REAL MOMS',
+              descripcion: 'Experiencia personal, anécdotas y testimonios de maternidad.',
+              ejes: ['Narrativo', 'Emocional'],
+              kpis: ['Testimonios auténticos', 'Engagement emocional', 'Storytime resonance'],
+              estado: 'Activo',
+              activacion: 85
+            },
+            'REAL FAMILY MOMENTS': {
+              nombre: 'REAL FAMILY MOMENTS',
+              descripcion: 'Interacciones y rituales familiares con el producto presente.',
+              ejes: ['Simbólico', 'Comunitario'],
+              kpis: ['Rituales familiares', 'Tradiciones heredadas', 'Conexión intergeneracional'],
+              estado: 'Oportunidad',
+              activacion: 72
+            },
+            'AUTHENTIC TREATS': {
+              nombre: 'AUTHENTIC TREATS',
+              descripcion: 'Producto como placer, consuelo o recompensa.',
+              ejes: ['Sensorial', 'Emocional'],
+              kpis: ['Experiencia sensorial', 'Momentos de placer', 'Confort emocional'],
+              estado: 'Activo',
+              activacion: 68
+            },
+            'MINDFUL NOURISHMENT': {
+              nombre: 'MINDFUL NOURISHMENT',
+              descripcion: 'Alimentación consciente + bienestar integral y valores familiares.',
+              ejes: ['Territorial', 'Simbólico'],
+              kpis: ['Alimentación consciente', 'Valores nutricionales', 'Bienestar integral'],
+              estado: 'Oportunidad',
+              activacion: 65
+            },
+            'RECIPES THAT HUG': {
+              nombre: 'RECIPES THAT HUG',
+              descripcion: 'Cocina emocional + intuitiva + gestión familiar.',
+              ejes: ['Narrativo', 'Comunitario', 'Simbólico'],
+              kpis: ['Cocina emocional', 'Cocina intuitiva', 'Gestión familiar'],
+              estado: 'Emergente',
+              activacion: 78,
+              extras: { cocinaEmocional: 91, cocinaIntuitiva: 88, gestionFamiliar: 90 }
+            }
+          };
+
+          // --- Normalizadores/Defaults ---
+          const EMO_KEYS = ['alegria','enojo','sorpresa','miedo','tristeza','nostalgia','ternura','orgullo','estres','culpa','cansancio'] as const;
+
+          const safe = (t: any) => {
+            const pilarNorm = (t?.pilarAsociado ?? t?.pilar ?? 'Pilar estratégico');
+            const pilarLabel = PilarLabel(pilarNorm);
+            const meta = PILLAR_META[pilarLabel] ?? null;
+
+            const emociones: Record<string, number> = {};
+            EMO_KEYS.forEach(k => { emociones[k] = Number(t?.emociones?.[k] ?? 0); });
+
+            return {
+              nombre: t?.nombre ?? '—',
+              categoria: t?.categoria ?? '—',
+              volumen: Number(t?.volume ?? t?.volumen ?? 0),
+              oportunidad: Number(t?.oportunidad ?? 0),
+              engagement: Number(t?.engagement ?? 0),
+              sentimientoPositivo: Number(t?.sentimiento?.positivo ?? 0),
+              ejes: Array.isArray(t?.ejesDetectados) && t.ejesDetectados.length ? t.ejesDetectados : [],
+              capital: Array.isArray(t?.capitalSimbolicoDetectado) && t.capitalSimbolicoDetectado.length ? t.capitalSimbolicoDetectado : [],
+              estados: Array.isArray(t?.estadosResonancia) && t.estadosResonancia.length ? t.estadosResonancia : [],
+              nse: t?.nseInferido ?? '—',
+              contexto: t?.contextoTerritorial ?? '—',
+              pilarLabel,
+              pilarMeta: meta,
+              emociones
+            };
+          };
+
+          const S = safe(topicoSeleccionado);
+
+          // --- Helpers UI ---
+          const Tag = ({text}: {text: string}) => (
+            <div className="flex items-center p-2 bg-white rounded-lg border">
+              <i className="ri-arrow-right-s-line text-blue-600 mr-2"></i>
+              <span className="text-sm text-gray-700">{text}</span>
+            </div>
+          );
+
+          const chip = (ok:boolean) => ok ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500';
+
+          return (
+            <div className="fixed inset-0 z-50">
+              <div className="absolute inset-0 bg-black/40" onClick={cerrarModal} />
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[1080px] max-w-[95vw] max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl border">
+                {/* Header */}
+                <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i className="ri-map-pin-line text-white text-2xl"></i>
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-white">{S.nombre}</h2>
+                        <p className="text-blue-100">Análisis ALMA Completo</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={cerrarModal}
+                      className="w-8 h-8 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 rounded-full transition-colors"
+                    >
+                      <i className="ri-close-line text-xl"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-8 space-y-8">
+                    {/* KPIs */}
+                    <div className="grid md:grid-cols-4 gap-6">
+                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 text-center">
+                            <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i className="ri-lightbulb-line text-white text-xl"></i>
+                            </div>
+                            <div className="text-2xl font-bold text-green-600 mb-1">{S.oportunidad}%</div>
+                            <div className="text-sm font-medium text-gray-700">Oportunidad ALMA</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
+                            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i className="ri-volume-up-line text-white text-xl"></i>
+                            </div>
+                            <div className="text-2xl font-bold text-blue-600 mb-1">{S.volumen.toLocaleString()}</div>
+                            <div className="text-sm font-medium text-gray-700">Volumen</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-6 text-center">
+                            <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i className="ri-heart-line text-white text-xl"></i>
+                            </div>
+                            <div className="text-2xl font-bold text-purple-600 mb-1">{S.sentimientoPositivo}%</div>
+                            <div className="text-sm font-medium text-gray-700">Sentimiento Positivo</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 text-center">
+                            <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i className="ri-fire-line text-white text-xl"></i>
+                            </div>
+                            <div className="text-2xl font-bold text-orange-600 mb-1">{S.engagement}%</div>
+                            <div className="text-sm font-medium text-gray-700">Engagement</div>
+                        </div>
+                    </div>
+
+                    {/* Pilar Estratégico */}
+                    <div className="grid lg:grid-cols-2 gap-8">
+                        <div className="space-y-6">
+                            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                                    <i className="ri-dna-line text-purple-600 mr-2"></i>
+                                    Ejes ALMA Detectados
+                                </h3>
+                                <div className="space-y-3">
+                                    {(S.ejes.length ? S.ejes : ['Sin ejes detectados aún']).map((eje, idx) => (
+                                        <div key={idx} className={`flex items-center p-3 rounded-lg border ${S.ejes.length ? 'bg-white border-purple-200' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
+                                            <i className={`ri-checkbox-circle-fill mr-3 ${S.ejes.length ? 'text-purple-600' : 'text-gray-400'}`}></i>
+                                            <span className="font-medium">{eje}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                                    <i className="ri-treasure-map-line text-blue-600 mr-2"></i>
+                                    Capital Simbólico Detectado
+                                </h3>
+                                <div className="space-y-2">
+                                    {(S.capital.length ? S.capital : ['Sin detecciones de capital simbólico']).map((c, i) => (
+                                        <Tag key={i} text={c} />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                                    <i className="ri-building-4-line text-green-600 mr-2"></i>
+                                    Pilar Estratégico
+                                </h3>
+                                <div className="p-4 bg-white rounded-lg border-l-4 border-green-500">
+                                    <div className="text-lg font-semibold text-gray-900 mb-1">
+                                        {S.pilarLabel.toUpperCase()}
+                                    </div>
+                                    <div className="text-xs mt-1">
+                                        <span className={`px-2 py-0.5 rounded ${chip(!!S.pilarMeta)}`}>
+                                            {S.pilarMeta?.estado ?? '—'}
+                                        </span>
+                                        {typeof S.pilarMeta?.activacion === 'number' && (
+                                            <span className="ml-2 text-gray-600">Activación: <b>{S.pilarMeta.activacion}%</b></span>
+                                        )}
+                                    </div>
+                                    <div className="text-sm text-gray-600 mt-2">
+                                        {S.pilarMeta?.descripcion ?? '—'}
+                                    </div>
+                                    <div className="text-sm text-gray-600 mt-2">
+                                        NSE Inferido: <span className="font-medium">{S.nse}</span> · Contexto: <span className="font-medium">{S.contexto}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                                    <i className="ri-map-2-line text-orange-600 mr-2"></i>
+                                    Resonancia por Estados
+                                </h3>
+                                <div className="space-y-2 max-h-64 overflow-y-auto">
+                                    {(S.estados.length ? S.estados : [
+                                        { estado: '—', porcentaje: 0, intensidad: 'baja' as const },
+                                        { estado: '—', porcentaje: 0, intensidad: 'baja' as const },
+                                        { estado: '—', porcentaje: 0, intensidad: 'baja' as const },
+                                    ]).map((e: EstadoResonancia, i: number) => (
+                                        <div key={i} className="flex items-center justify-between p-2 bg-white rounded border">
+                                            <div className="flex items-center">
+                                                <div className={`w-3 h-3 rounded-full mr-3 ${
+                                                    e.intensidad === 'alta' ? 'bg-red-500' :
+                                                    e.intensidad === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                                                }`}></div>
+                                                <span className="text-sm font-medium text-gray-900">{e.estado}</span>
+                                            </div>
+                                            <span className="text-sm font-bold text-gray-700">{e.porcentaje}%</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Mapa emocional */}
+                    <div className="bg-pink-50 rounded-xl p-6 border border-pink-200">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                            <i className="ri-emotion-line text-pink-600 mr-2"></i>
+                            Mapa Emocional Detallado
+                        </h3>
+                        <div className="grid md:grid-cols-4 gap-4">
+                            {EMO_KEYS.map((k) => {
+                                const val = Math.max(0, Math.min(100, Number(S.emociones[k] ?? 0)));
+                                return (
+                                    <div key={k} className="bg-white rounded-lg p-4 border border-pink-200">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-medium text-gray-700 capitalize">{k}</span>
+                                            <span className="text-lg font-bold text-pink-600">{val}%</span>
+                                        </div>
+                                        <div className="w-full bg-gray-200 rounded-full h-2">
+                                            <div className="bg-gradient-to-r from-pink-400 to-pink-600 h-2 rounded-full transition-all duration-500" style={{ width: `${val}%` }} />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Recomendaciones */}
+                    <div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-xl p-6 text-white">
+                        <h3 className="text-xl font-bold mb-4 flex items-center">
+                            <i className="ri-lightbulb-line mr-2"></i>
+                            Recomendaciones Estratégicas ALMA
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 className="font-semibold text-purple-100 mb-3">Contenido Recomendado:</h4>
+                                <div className="space-y-2 text-sm text-purple-100">
+                                    <div className="flex items-start"><i className="ri-arrow-right-line mt-1 mr-2"></i><span>Desarrollar contenido {S.pilarLabel} enfocado en emociones dominantes</span></div>
+                                    <div className="flex items-start"><i className="ri-arrow-right-line mt-1 mr-2"></i><span>Dirigir a NSE {S.nse} con enfoque {S.contexto}</span></div>
+                                    <div className="flex items-start"><i className="ri-arrow-right-line mt-1 mr-2"></i><span>Activar ejes técnicos: {(S.pilarMeta?.ejes ?? S.ejes).join(', ') || '—'}</span></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-purple-100 mb-3">Estrategia de Capital:</h4>
+                                <div className="space-y-2 text-sm text-purple-100">
+                                    {(S.capital.length ? S.capital : ['Sin señales de capital detectadas']).map((c, i) => (
+                                        <div key={i} className="flex items-start"><i className="ri-check-line mt-1 mr-2"></i><span>{c}</span></div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Footer sticky */}
+                <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-8 py-4 z-10">
+                    <div className="flex items-center justify-between">
+                        <div className="text-sm text-gray-600">
+                            Análisis ALMA • {S.volumen.toLocaleString()} menciones procesadas • Precisión: 94.2%
+                        </div>
+                        <div className="flex items-center space-x-3">
+                            <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors whitespace-nowrap">
+                                <i className="ri-download-line mr-2"></i>
+                                Exportar Análisis
+                            </button>
+                            <button
+                                onClick={cerrarModal}
+                                className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors whitespace-nowrap"
+                            >
+                                <i className="ri-close-line mr-2"></i>
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+
+        {/* ====== Modal Palabra (Conversation Cloud) ====== */}
+        {mostrarModalPalabra && palabraSeleccionada && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-indigo-700 px-6 py-4 rounded-t-2xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                      <i className="ri-chat-3-line text-white text-lg"></i>
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-white">{palabraSeleccionada.palabra}</h2>
+                      <p className="text-purple-100 text-sm">Análisis detallado de palabra clave</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setMostrarModalPalabra(false)} className="w-6 h-6 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 rounded-full transition-colors">
+                    <i className="ri-close-line text-lg"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-purple-50 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-600">{palabraSeleccionada.volumen.toLocaleString()}</div>
+                    <div className="text-sm text-gray-600">Menciones</div>
+                  </div>
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">{palabraSeleccionada.sentimiento}%</div>
+                    <div className="text-sm text-gray-600">Sentimiento</div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Menciones Destacadas</h3>
+                  <div className="space-y-2">
+                    {palabraSeleccionada.menciones.map((mencion, index) => (
+                      <div key={index} className="p-3 bg-gray-50 rounded-lg text-sm text-gray-700">"{mencion}"</div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Contextos</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {palabraSeleccionada.contextos.map((contexto, index) => (
+                      <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">{contexto}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Insights ALMA</h3>
+                  <div className="space-y-2">
+                    {palabraSeleccionada.insights.map((insight, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <i className="ri-lightbulb-line text-purple-600 mt-1"></i>
+                        <span className="text-sm text-gray-700">{insight}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
