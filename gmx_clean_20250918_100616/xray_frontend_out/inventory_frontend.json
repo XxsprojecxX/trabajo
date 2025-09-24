@@ -1,0 +1,472 @@
+{
+  "generated_at": "2025-09-22T15:38:10.963777",
+  "frontend_roots": [
+    "frontend"
+  ],
+  "frameworks": [],
+  "files": [
+    {
+      "file": "frontend/middleware.ts",
+      "imports": [
+        "next/server",
+        "next/server"
+      ],
+      "exports": [
+        "config",
+        "middleware"
+      ],
+      "env_vars": [
+        "TOPICOS_VIEW"
+      ],
+      "api_calls": [],
+      "notes": []
+    },
+    {
+      "file": "frontend/next.config.js",
+      "imports": [],
+      "exports": [],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": []
+    },
+    {
+      "file": "frontend/app/layout.tsx",
+      "imports": [
+        "./globals.css",
+        "react",
+        "@/components/NavBar"
+      ],
+      "exports": [
+        "RootLayout",
+        "metadata"
+      ],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/topicos-page.tsx",
+      "imports": [
+        "react"
+      ],
+      "exports": [
+        "TopicosPage"
+      ],
+      "env_vars": [],
+      "api_calls": [
+        "/api/topicos?limit=30"
+      ],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/page.tsx",
+      "imports": [
+        "next/link",
+        "react"
+      ],
+      "exports": [
+        "Home"
+      ],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/not-found.tsx",
+      "imports": [],
+      "exports": [
+        "NotFound"
+      ],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/insights/BigQueryStrip.tsx",
+      "imports": [],
+      "exports": [
+        "BigQueryStrip"
+      ],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/insights/page.tsx",
+      "imports": [
+        "next/link"
+      ],
+      "exports": [],
+      "env_vars": [
+        "NEXT_PUBLIC_BASE_URL"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/insights/OriginalUI.tsx",
+      "imports": [
+        "react",
+        "next/link"
+      ],
+      "exports": [
+        "InsightsPage"
+      ],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/comments/page.tsx",
+      "imports": [
+        "react"
+      ],
+      "exports": [
+        "CommentsPage"
+      ],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/topicos/page.tsx",
+      "imports": [
+        "react",
+        "react"
+      ],
+      "exports": [
+        "TopicosPage"
+      ],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/topicos-lite/page.tsx",
+      "imports": [],
+      "exports": [
+        "dynamic"
+      ],
+      "env_vars": [],
+      "api_calls": [
+        "http://localhost:3000/api/topicos?limit=20"
+      ],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/creadoras/page.tsx",
+      "imports": [
+        "next/link"
+      ],
+      "exports": [],
+      "env_vars": [
+        "NEXT_PUBLIC_BASE_URL"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/contenidos-lite/page.tsx",
+      "imports": [],
+      "exports": [
+        "dynamic"
+      ],
+      "env_vars": [],
+      "api_calls": [
+        "/api/contenidos"
+      ],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/dashboard/page.tsx",
+      "imports": [
+        "react",
+        "next/link"
+      ],
+      "exports": [
+        "DashboardPage"
+      ],
+      "env_vars": [
+        "NEXT_PUBLIC_BASE_URL"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/contenidos/page.tsx",
+      "imports": [
+        "next/link"
+      ],
+      "exports": [],
+      "env_vars": [
+        "NEXT_PUBLIC_BASE_URL"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/topicos/pack/page.tsx",
+      "imports": [
+        "react",
+        "next/link"
+      ],
+      "exports": [
+        "TopicosPage"
+      ],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js"
+      ]
+    },
+    {
+      "file": "frontend/app/api/insights/route.ts",
+      "imports": [
+        "next/server",
+        "@google-cloud/bigquery"
+      ],
+      "exports": [
+        "dynamic",
+        "revalidate",
+        "runtime"
+      ],
+      "env_vars": [
+        "GOOGLE_APPLICATION_CREDENTIALS"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/topicos/route.ts",
+      "imports": [
+        "next/server",
+        "@google-cloud/bigquery",
+        "@/lib/universes"
+      ],
+      "exports": [
+        "runtime"
+      ],
+      "env_vars": [
+        "GOOGLE_APPLICATION_CREDENTIALS"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/embeddings/route.ts",
+      "imports": [
+        "@/lib/embeddings"
+      ],
+      "exports": [],
+      "env_vars": [
+        "EMBEDDINGS_PROVIDER_ORDER"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/ig/route.ts",
+      "imports": [
+        "next/server",
+        "@/lib/sheets"
+      ],
+      "exports": [],
+      "env_vars": [
+        "IG_SHEET_ID",
+        "IG_SHEET_TAB"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/health/route.ts",
+      "imports": [
+        "next/server"
+      ],
+      "exports": [],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/creadoras/route.ts",
+      "imports": [
+        "next/server",
+        "@google-cloud/bigquery",
+        "node:fs"
+      ],
+      "exports": [],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/bq-dryrun/route.ts",
+      "imports": [
+        "next/server",
+        "@/lib/bigquery"
+      ],
+      "exports": [],
+      "env_vars": [
+        "GOOGLE_DATASET",
+        "GOOGLE_PROJECT_ID",
+        "GOOGLE_TABLE"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/enrichment/route.ts",
+      "imports": [
+        "next/server"
+      ],
+      "exports": [],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/topicos.off/route.ts",
+      "imports": [
+        "next/server",
+        "@google-cloud/bigquery"
+      ],
+      "exports": [
+        "dynamic",
+        "revalidate",
+        "runtime"
+      ],
+      "env_vars": [
+        "GOOGLE_APPLICATION_CREDENTIALS"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/contenidos/route.ts",
+      "imports": [
+        "next/server",
+        "@google-cloud/bigquery",
+        "node:fs"
+      ],
+      "exports": [],
+      "env_vars": [],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/comments/v1/route.ts",
+      "imports": [
+        "next/server",
+        "@google-cloud/bigquery"
+      ],
+      "exports": [
+        "dynamic"
+      ],
+      "env_vars": [
+        "BQ_LOCATION",
+        "COMMENTS_METRICS_TABLE_FQN",
+        "COMMENTS_VIEW_FQN",
+        "GOOGLE_CLOUD_PROJECT",
+        "GOOGLE_PROJECT_ID"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/topicos/v2/route.ts",
+      "imports": [
+        "next/server",
+        "@/lib/bigquery"
+      ],
+      "exports": [],
+      "env_vars": [
+        "TOPICOS_VIEW_V2"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    },
+    {
+      "file": "frontend/app/api/topicos.off/topicos/route.ts",
+      "imports": [
+        "next/server"
+      ],
+      "exports": [
+        "runtime"
+      ],
+      "env_vars": [
+        "GOOGLE_APPLICATION_CREDENTIALS"
+      ],
+      "api_calls": [],
+      "notes": [
+        "posible ruta Next.js",
+        "posible API route"
+      ]
+    }
+  ],
+  "edges": []
+}

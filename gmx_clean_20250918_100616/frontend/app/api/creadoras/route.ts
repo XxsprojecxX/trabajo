@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
   try { client = getClient(env); }
   catch (e: any) { log('credenciales_error', { error: String(e?.message || e) }); return NextResponse.json({ ok:false, error:String(e?.message||e) }, { status: 500 }); }
 
-  let viewFqn: string, active: 'v1'|'v2';
+  let viewFqn: string, active: string;
   try { ({ viewFqn, active } = resolveView(env)); }
   catch (e: any) { return NextResponse.json({ ok:false, error:String(e?.message||e) }, { status: 500 }); }
 

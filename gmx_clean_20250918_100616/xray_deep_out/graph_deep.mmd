@@ -1,0 +1,660 @@
+graph TD
+  "backend/python_jobs/Analizer/comment_analizer.py"["comment_analizer.py"]
+  "backend/python_jobs/Analizer/comment_metrics_job.py"["comment_metrics_job.py"]
+  "backend/python_jobs/conversion/__init__.py"["__init__.py"]
+  "backend/python_jobs/conversion/convert_yaml.py"["convert_yaml.py"]
+  "backend/python_jobs/conversion/converters.py"["converters.py"]
+  "backend/python_jobs/conversion/schema.py"["schema.py"]
+  "backend/python_jobs/conversion/yaml_schema_v1.py"["yaml_schema_v1.py"]
+  "backend/python_jobs/conversion/yaml_schema_v1beta.py"["yaml_schema_v1beta.py"]
+  "backend/python_jobs/orquestador/main.py"["main.py"]
+  "backend/python_jobs/orquestador/recolector_final.py"["recolector_final.py"]
+  "backend/python_jobs/orquestador/reparar_script.py"["reparar_script.py"]
+  "backend/python_jobs/recolector/diagnostico_selector.py"["diagnostico_selector.py"]
+  "backend/python_jobs/recolector/instagram_scraper.py"["instagram_scraper.py"]
+  "backend/python_jobs/recolector/tiktok_scraper.py"["tiktok_scraper.py"]
+  "backend/python_jobs/tools/__init__.py"["__init__.py"]
+  "backend/python_jobs/tools/app_engine_config_exception.py"["app_engine_config_exception.py"]
+  "backend/python_jobs/tools/append_memoria.py"["append_memoria.py"]
+  "backend/python_jobs/tools/appengine_rpc.py"["appengine_rpc.py"]
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py"["appengine_rpc_httplib2.py"]
+  "backend/python_jobs/tools/appengine_rpc_test_util.py"["appengine_rpc_test_util.py"]
+  "backend/python_jobs/tools/cmcdump.py"["cmcdump.py"]
+  "backend/python_jobs/tools/cmpdump.py"["cmpdump.py"]
+  "backend/python_jobs/tools/context_util.py"["context_util.py"]
+  "backend/python_jobs/tools/crldump.py"["crldump.py"]
+  "backend/python_jobs/tools/crmfdump.py"["crmfdump.py"]
+  "backend/python_jobs/tools/cron_xml_parser.py"["cron_xml_parser.py"]
+  "backend/python_jobs/tools/cvt_pyparsing_pep8_names.py"["cvt_pyparsing_pep8_names.py"]
+  "backend/python_jobs/tools/dispatch_xml_parser.py"["dispatch_xml_parser.py"]
+  "backend/python_jobs/tools/docker_appender_.py"["docker_appender_.py"]
+  "backend/python_jobs/tools/docker_puller_.py"["docker_puller_.py"]
+  "backend/python_jobs/tools/docker_pusher_.py"["docker_pusher_.py"]
+  "backend/python_jobs/tools/dos_xml_parser.py"["dos_xml_parser.py"]
+  "backend/python_jobs/tools/fast_flatten_.py"["fast_flatten_.py"]
+  "backend/python_jobs/tools/fast_importer_.py"["fast_importer_.py"]
+  "backend/python_jobs/tools/fast_puller_.py"["fast_puller_.py"]
+  "backend/python_jobs/tools/fast_pusher_.py"["fast_pusher_.py"]
+  "backend/python_jobs/tools/image_digester_.py"["image_digester_.py"]
+  "backend/python_jobs/tools/logging_setup_.py"["logging_setup_.py"]
+  "backend/python_jobs/tools/nearley.py"["nearley.py"]
+  "backend/python_jobs/tools/ocspclient.py"["ocspclient.py"]
+  "backend/python_jobs/tools/ocspreqdump.py"["ocspreqdump.py"]
+  "backend/python_jobs/tools/ocsprspdump.py"["ocsprspdump.py"]
+  "backend/python_jobs/tools/patched_.py"["patched_.py"]
+  "backend/python_jobs/tools/pkcs10dump.py"["pkcs10dump.py"]
+  "backend/python_jobs/tools/pkcs1dump.py"["pkcs1dump.py"]
+  "backend/python_jobs/tools/pkcs7dump.py"["pkcs7dump.py"]
+  "backend/python_jobs/tools/pkcs8dump.py"["pkcs8dump.py"]
+  "backend/python_jobs/tools/platform_args_.py"["platform_args_.py"]
+  "backend/python_jobs/tools/queue_xml_parser.py"["queue_xml_parser.py"]
+  "backend/python_jobs/tools/serialize.py"["serialize.py"]
+  "backend/python_jobs/tools/snmpget.py"["snmpget.py"]
+  "backend/python_jobs/tools/standalone.py"["standalone.py"]
+  "backend/python_jobs/tools/value_mixin.py"["value_mixin.py"]
+  "backend/python_jobs/tools/x509dump-rfc5280.py"["x509dump-rfc5280.py"]
+  "backend/python_jobs/tools/x509dump.py"["x509dump.py"]
+  "backend/python_jobs/tools/xml_parser_utils.py"["xml_parser_utils.py"]
+  "backend/python_jobs/validador_web/main.py"["main.py"]
+  "ingestion/brightdata_connector.py"["brightdata_connector.py"]
+  "maestro_ejecucion/main.py"["main.py"]
+  "xray_deep.py"["xray_deep.py"]
+  "xray_out/xray_inventory.py"["xray_inventory.py"]
+  "URL::http://%s/_ah/login"["URL::http://%s/_ah/login"]
+  "URL::http://code.google.com/apis/accounts/AuthForInstalledApps.html"["URL::http://code.google.com/apis/accounts/AuthForInstalledApps.html"]
+  "URL::http://localhost/"["URL::http://localhost/"]
+  "URL::http://pyasn1.sf.net/license.html"["URL::http://pyasn1.sf.net/license.html"]
+  "URL::http://pypi.python.org/pypi/ssl"["URL::http://pypi.python.org/pypi/ssl"]
+  "URL::http://www.apache.org/licenses/LICENSE-2.0"["URL::http://www.apache.org/licenses/LICENSE-2.0"]
+  "URL::https://%s/accounts/ClientLogin"["URL::https://%s/accounts/ClientLogin"]
+  "URL::https://%s/o/oauth2/token"["URL::https://%s/o/oauth2/token"]
+  "URL::https://<hostname>/id/<repo_id>"["URL::https://<hostname>/id/<repo_id>"]
+  "URL::https://<hostname>/p/<project_id>"["URL::https://<hostname>/p/<project_id>"]
+  "URL::https://<hostname>/p/<project_id>/r/<repo_name>"["URL::https://<hostname>/p/<project_id>/r/<repo_name>"]
+  "URL::https://api.brightdata.com/request"["URL::https://api.brightdata.com/request"]
+  "URL::https://developers.google.com/appengine/kb/general#rpcssl"["URL::https://developers.google.com/appengine/kb/general#rpcssl"]
+  "URL::https://docs.docker.com/registry/spec/manifest-v2-2/"["URL::https://docs.docker.com/registry/spec/manifest-v2-2/"]
+  "URL::https://github.com/erezsh/lark"["URL::https://github.com/erezsh/lark"]
+  "URL::https://github.com/opencontainers/image-spec"["URL::https://github.com/opencontainers/image-spec"]
+  "URL::https://mozilla.org/MPL/2.0/."["URL::https://mozilla.org/MPL/2.0/."]
+  "URL::https://stackoverflow.com/questions/1769332/script-to-remove-python-comments-docstrings"["URL::https://stackoverflow.com/questions/1769332/script-to-remove-python-comments-docstrings"]
+  "URL::https://us-central1-galletas-piloto-ju-250726.cloudfunctions.net/analizar_texto_individual"["URL::https://us-central1-galletas-piloto-ju-250726.cloudfunctions.net/analizar_texto_individual"]
+  "URL::https://us-central1-galletas-piloto-ju-250726.cloudfunctions.net/orquestar_analisis_conversacion"["URL::https://us-central1-galletas-piloto-ju-250726.cloudfunctions.net/orquestar_analisis_conversacion"]
+  "URL::https://www.google.com/accounts/ClientLogin"["URL::https://www.google.com/accounts/ClientLogin"]
+  "URL::https://www.google.com/accounts/DisplayUnlockCaptcha\n"["URL::https://www.google.com/accounts/DisplayUnlockCaptcha\n"]
+  "URL::https://www.google.com/accounts/ServiceLogin"["URL::https://www.google.com/accounts/ServiceLogin"]
+  "URL::https://www.instagram.com/accounts/login/"["URL::https://www.instagram.com/accounts/login/"]
+  "URL::https://www.instagram.com/p/DHcQE-gPk_F/"["URL::https://www.instagram.com/p/DHcQE-gPk_F/"]
+  "URL::https://www.instagram.com/p/xyz123/"["URL::https://www.instagram.com/p/xyz123/"]
+  "URL::https://www.tiktok.com/@usuario/video/1234567890"["URL::https://www.tiktok.com/@usuario/video/1234567890"]
+  "URL::https://www\.google\.com/a/[a-z0-9.-]+/ServiceLogin"["URL::https://www\.google\.com/a/[a-z0-9.-]+/ServiceLogin"]
+  "URL::https://www\.google\.com/a/[a-z0-9\.\-]+/ServiceLogin"["URL::https://www\.google\.com/a/[a-z0-9\.\-]+/ServiceLogin"]
+  "BQ::127.0.0"["BQ::127.0.0"]
+  "BQ::a.value.count"["BQ::a.value.count"]
+  "BQ::accounts.google.com"["BQ::accounts.google.com"]
+  "BQ::api.brightdata.com"["BQ::api.brightdata.com"]
+  "BQ::code.google.com"["BQ::code.google.com"]
+  "BQ::containerregistry.client.v2"["BQ::containerregistry.client.v2"]
+  "BQ::containerregistry.client.v2_2"["BQ::containerregistry.client.v2_2"]
+  "BQ::datetime.datetime.now"["BQ::datetime.datetime.now"]
+  "BQ::developers.google.com"["BQ::developers.google.com"]
+  "BQ::docs.docker.com"["BQ::docs.docker.com"]
+  "BQ::e.__class__.__name__"["BQ::e.__class__.__name__"]
+  "BQ::e.response.status_code"["BQ::e.response.status_code"]
+  "BQ::e.response.text"["BQ::e.response.text"]
+  "BQ::el.text.strip"["BQ::el.text.strip"]
+  "BQ::encoder.encoder.BitStringEncoder"["BQ::encoder.encoder.BitStringEncoder"]
+  "BQ::entry.subnet.split"["BQ::entry.subnet.split"]
+  "BQ::fn.args.args"["BQ::fn.args.args"]
+  "BQ::galletas-piloto-ju-250726.analisis_galletas.resultados_analizados"["BQ::galletas-piloto-ju-250726.analisis_galletas.resultados_analizados"]
+  "BQ::galletas-piloto-ju-250726.gmx_week_2025_09_04_2025_09_11.comment_metrics"["BQ::galletas-piloto-ju-250726.gmx_week_2025_09_04_2025_09_11.comment_metrics"]
+  "BQ::galletas-piloto-ju-250726.gmx_week_2025_09_04_2025_09_11.vw_comments_app_api"["BQ::galletas-piloto-ju-250726.gmx_week_2025_09_04_2025_09_11.vw_comments_app_api"]
+  "BQ::google.api_core.exceptions"["BQ::google.api_core.exceptions"]
+  "BQ::google.appengine.api"["BQ::google.appengine.api"]
+  "BQ::google.auth.transport"["BQ::google.auth.transport"]
+  "BQ::google.cloud.bigquery"["BQ::google.cloud.bigquery"]
+  "BQ::google.oauth2.id_token"["BQ::google.oauth2.id_token"]
+  "BQ::googlecloudsdk.appengine._internal"["BQ::googlecloudsdk.appengine._internal"]
+  "BQ::googlecloudsdk.appengine.admin"["BQ::googlecloudsdk.appengine.admin"]
+  "BQ::googlecloudsdk.appengine.api"["BQ::googlecloudsdk.appengine.api"]
+  "BQ::googlecloudsdk.appengine.googlecron"["BQ::googlecloudsdk.appengine.googlecron"]
+  "BQ::googlecloudsdk.appengine.tools"["BQ::googlecloudsdk.appengine.tools"]
+  "BQ::googlecloudsdk.core.util"["BQ::googlecloudsdk.core.util"]
+  "BQ::http.cookiejar.LoadError"["BQ::http.cookiejar.LoadError"]
+  "BQ::http.cookiejar.MozillaCookieJar"["BQ::http.cookiejar.MozillaCookieJar"]
+  "BQ::io.BytesIO.__init__"["BQ::io.BytesIO.__init__"]
+  "BQ::lark.tools.serialize"["BQ::lark.tools.serialize"]
+  "BQ::lark.tools.standalone"["BQ::lark.tools.standalone"]
+  "BQ::logging.root.addHandler"["BQ::logging.root.addHandler"]
+  "BQ::logging.root.setLevel"["BQ::logging.root.setLevel"]
+  "BQ::m.args.args"["BQ::m.args.args"]
+  "BQ::n.args.args"["BQ::n.args.args"]
+  "BQ::n.func.attr"["BQ::n.func.attr"]
+  "BQ::n.func.id"["BQ::n.func.id"]
+  "BQ::n2l.alias_js_code.items"["BQ::n2l.alias_js_code.items"]
+  "BQ::n2l.extra_rules.items"["BQ::n2l.extra_rules.items"]
+  "BQ::namespace.start.append"["BQ::namespace.start.append"]
+  "BQ::node.attrib.get"["BQ::node.attrib.get"]
+  "BQ::node.tag.rsplit"["BQ::node.tag.rsplit"]
+  "BQ::node.text.strip"["BQ::node.text.strip"]
+  "BQ::ns.grammar_file.close"["BQ::ns.grammar_file.close"]
+  "BQ::ns.out.close"["BQ::ns.out.close"]
+  "BQ::oauth2client.util.scopes_to_string"["BQ::oauth2client.util.scopes_to_string"]
+  "BQ::os.environ.get"["BQ::os.environ.get"]
+  "BQ::os.path.abspath"["BQ::os.path.abspath"]
+  "BQ::os.path.basename"["BQ::os.path.basename"]
+  "BQ::os.path.dirname"["BQ::os.path.dirname"]
+  "BQ::os.path.exists"["BQ::os.path.exists"]
+  "BQ::os.path.expanduser"["BQ::os.path.expanduser"]
+  "BQ::os.path.isfile"["BQ::os.path.isfile"]
+  "BQ::os.path.join"["BQ::os.path.join"]
+  "BQ::os.path.normpath"["BQ::os.path.normpath"]
+  "BQ::pp.util.make_compressed_re"["BQ::pp.util.make_compressed_re"]
+  "BQ::project.dataset.table"["BQ::project.dataset.table"]
+  "BQ::proyecto.dataset.tabla"["BQ::proyecto.dataset.tabla"]
+  "BQ::pyasn1.codec.ber"["BQ::pyasn1.codec.ber"]
+  "BQ::pyasn1.codec.der"["BQ::pyasn1.codec.der"]
+  "BQ::pyasn1.sf.net"["BQ::pyasn1.sf.net"]
+  "BQ::pypi.python.org"["BQ::pypi.python.org"]
+  "BQ::queue.acl.user_emails"["BQ::queue.acl.user_emails"]
+  "BQ::queue.acl.writer_emails"["BQ::queue.acl.writer_emails"]
+  "BQ::request.args.get"["BQ::request.args.get"]
+  "BQ::requests.exceptions.HTTPError"["BQ::requests.exceptions.HTTPError"]
+  "BQ::requests.exceptions.RequestException"["BQ::requests.exceptions.RequestException"]
+  "BQ::selenium.webdriver.chrome"["BQ::selenium.webdriver.chrome"]
+  "BQ::selenium.webdriver.common"["BQ::selenium.webdriver.common"]
+  "BQ::selenium.webdriver.support"["BQ::selenium.webdriver.support"]
+  "BQ::self.__class__.__name__"["BQ::self.__class__.__name__"]
+  "BQ::self.__dict__.items"["BQ::self.__dict__.items"]
+  "BQ::self.acl.GetYamlStatementsList"["BQ::self.acl.GetYamlStatementsList"]
+  "BQ::self.blacklist_entries.append"["BQ::self.blacklist_entries.append"]
+  "BQ::self.cache.get"["BQ::self.cache.get"]
+  "BQ::self.cache.pop"["BQ::self.cache.pop"]
+  "BQ::self.cookie_jar.filename"["BQ::self.cookie_jar.filename"]
+  "BQ::self.cookie_jar.load"["BQ::self.cookie_jar.load"]
+  "BQ::self.cookie_jar.save"["BQ::self.cookie_jar.save"]
+  "BQ::self.credentials.access_token_expired"["BQ::self.credentials.access_token_expired"]
+  "BQ::self.credentials.authorize"["BQ::self.credentials.authorize"]
+  "BQ::self.credentials.invalid"["BQ::self.credentials.invalid"]
+  "BQ::self.crons.append"["BQ::self.crons.append"]
+  "BQ::self.dispatch_entries.append"["BQ::self.dispatch_entries.append"]
+  "BQ::self.element.ConvertValue"["BQ::self.element.ConvertValue"]
+  "BQ::self.errors.append"["BQ::self.errors.append"]
+  "BQ::self.extra_headers.items"["BQ::self.extra_headers.items"]
+  "BQ::self.extra_headers.update"["BQ::self.extra_headers.update"]
+  "BQ::self.fields.items"["BQ::self.fields.items"]
+  "BQ::self.fp.close"["BQ::self.fp.close"]
+  "BQ::self.fp.read"["BQ::self.fp.read"]
+  "BQ::self.fp.readline"["BQ::self.fp.readline"]
+  "BQ::self.host.split"["BQ::self.host.split"]
+  "BQ::self.host.startswith"["BQ::self.host.startswith"]
+  "BQ::self.host_override.split"["BQ::self.host_override.split"]
+  "BQ::self.http.follow_redirects"["BQ::self.http.follow_redirects"]
+  "BQ::self.http.request"["BQ::self.http.request"]
+  "BQ::self.http.timeout"["BQ::self.http.timeout"]
+  "BQ::self.oauth2_parameters.access_token"["BQ::self.oauth2_parameters.access_token"]
+  "BQ::self.oauth2_parameters.client_id"["BQ::self.oauth2_parameters.client_id"]
+  "BQ::self.oauth2_parameters.client_secret"["BQ::self.oauth2_parameters.client_secret"]
+  "BQ::self.oauth2_parameters.refresh_token"["BQ::self.oauth2_parameters.refresh_token"]
+  "BQ::self.oauth2_parameters.scope"["BQ::self.oauth2_parameters.scope"]
+  "BQ::self.oauth2_parameters.token_uri"["BQ::self.oauth2_parameters.token_uri"]
+  "BQ::self.oauth_parameters.token_uri"["BQ::self.oauth_parameters.token_uri"]
+  "BQ::self.opener.open"["BQ::self.opener.open"]
+  "BQ::self.opener.set_save_request_data"["BQ::self.opener.set_save_request_data"]
+  "BQ::self.opener.set_strict"["BQ::self.opener.set_strict"]
+  "BQ::self.ordered_responses.pop"["BQ::self.ordered_responses.pop"]
+  "BQ::self.queue_xml.queues"["BQ::self.queue_xml.queues"]
+  "BQ::self.queue_xml.total_storage_limit"["BQ::self.queue_xml.total_storage_limit"]
+  "BQ::self.request_data.append"["BQ::self.request_data.append"]
+  "BQ::self.requests.append"["BQ::self.requests.append"]
+  "BQ::self.retry_parameters.GetYamlStatementsList"["BQ::self.retry_parameters.GetYamlStatementsList"]
+  "BQ::self.scheme.upper"["BQ::self.scheme.upper"]
+  "BQ::self.storage.get"["BQ::self.storage.get"]
+  "BQ::sys.path.append"["BQ::sys.path.append"]
+  "BQ::sys.stdin.read"["BQ::sys.stdin.read"]
+  "BQ::sys.stdout.writelines"["BQ::sys.stdout.writelines"]
+  "BQ::urllib.error.HTTPError"["BQ::urllib.error.HTTPError"]
+  "BQ::urllib.parse.urlencode"["BQ::urllib.parse.urlencode"]
+  "BQ::urllib.request.BaseHandler"["BQ::urllib.request.BaseHandler"]
+  "BQ::urllib.request.HTTPCookieProcessor"["BQ::urllib.request.HTTPCookieProcessor"]
+  "BQ::urllib.request.HTTPDefaultErrorHandler"["BQ::urllib.request.HTTPDefaultErrorHandler"]
+  "BQ::urllib.request.HTTPErrorProcessor"["BQ::urllib.request.HTTPErrorProcessor"]
+  "BQ::urllib.request.HTTPHandler"["BQ::urllib.request.HTTPHandler"]
+  "BQ::urllib.request.HTTPSHandler"["BQ::urllib.request.HTTPSHandler"]
+  "BQ::urllib.request.OpenerDirector"["BQ::urllib.request.OpenerDirector"]
+  "BQ::urllib.request.ProxyHandler"["BQ::urllib.request.ProxyHandler"]
+  "BQ::urllib.request.Request"["BQ::urllib.request.Request"]
+  "BQ::urllib.request.UnknownHandler"["BQ::urllib.request.UnknownHandler"]
+  "BQ::urllib.response.addinfourl"["BQ::urllib.response.addinfourl"]
+  "BQ::us-central1-galletas-piloto-ju-250726.cloudfunctions.net"["BQ::us-central1-galletas-piloto-ju-250726.cloudfunctions.net"]
+  "BQ::www.apache.org"["BQ::www.apache.org"]
+  "BQ::www.google.com"["BQ::www.google.com"]
+  "BQ::www.instagram.com"["BQ::www.instagram.com"]
+  "BQ::www.tiktok.com"["BQ::www.tiktok.com"]
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- import --> "backend/python_jobs/Analizer/comment_analizer.py"
+  "xray_deep.py" -- BQ --> "BQ::project.dataset.table"
+  "xray_deep.py" -- BQ --> "BQ::galletas-piloto-ju-250726.analisis_galletas.resultados_analizados"
+  "xray_deep.py" -- BQ --> "BQ::fn.args.args"
+  "xray_deep.py" -- BQ --> "BQ::m.args.args"
+  "ingestion/brightdata_connector.py" -- BQ --> "BQ::os.path.join"
+  "ingestion/brightdata_connector.py" -- BQ --> "BQ::os.path.dirname"
+  "maestro_ejecucion/main.py" -- HTTP --> "URL::https://us-central1-galletas-piloto-ju-250726.cloudfunctions.net/orquestar_analisis_conversacion"
+  "maestro_ejecucion/main.py" -- BQ --> "BQ::us-central1-galletas-piloto-ju-250726.cloudfunctions.net"
+  "maestro_ejecucion/main.py" -- BQ --> "BQ::requests.exceptions.RequestException"
+  "maestro_ejecucion/main.py" -- BQ --> "BQ::os.path.basename"
+  "maestro_ejecucion/main.py" -- FILE --> "manifiesto.json"
+  "xray_out/xray_inventory.py" -- BQ --> "BQ::n.func.attr"
+  "xray_out/xray_inventory.py" -- BQ --> "BQ::a.value.count"
+  "xray_out/xray_inventory.py" -- BQ --> "BQ::n.func.id"
+  "xray_out/xray_inventory.py" -- BQ --> "BQ::n.args.args"
+  "xray_out/xray_inventory.py" -- BQ --> "BQ::n.args.args"
+  "xray_out/xray_inventory.py" -- BQ --> "BQ::google.cloud.bigquery"
+  "backend/python_jobs/tools/serialize.py" -- BQ --> "BQ::lark.tools.serialize"
+  "backend/python_jobs/tools/append_memoria.py" -- BQ --> "BQ::sys.stdin.read"
+  "backend/python_jobs/tools/append_memoria.py" -- BQ --> "BQ::datetime.datetime.now"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- HTTP --> "URL::http://%s/_ah/login"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- HTTP --> "URL::https://%s/o/oauth2/token"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- HTTP --> "URL::https://www.google.com/accounts/ServiceLogin"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- HTTP --> "URL::https://www\.google\.com/a/[a-z0-9.-]+/ServiceLogin"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::googlecloudsdk.core.util"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::googlecloudsdk.appengine._internal"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::urllib.error.HTTPError"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::urllib.parse.urlencode"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.cache.get"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.cache.pop"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::os.path.normpath"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::os.path.dirname"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::os.path.exists"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.http.follow_redirects"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.http.timeout"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.http.request"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::www.google.com"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::os.path.expanduser"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::accounts.google.com"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.storage.get"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.credentials.invalid"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.oauth2_parameters.access_token"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.oauth2_parameters.refresh_token"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.oauth2_parameters.token_uri"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.oauth_parameters.token_uri"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.oauth2_parameters.client_id"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.oauth2_parameters.client_secret"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.oauth2_parameters.scope"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.credentials.invalid"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.credentials.access_token_expired"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::self.credentials.authorize"
+  "backend/python_jobs/tools/appengine_rpc_httplib2.py" -- BQ --> "BQ::oauth2client.util.scopes_to_string"
+  "backend/python_jobs/tools/pkcs10dump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/pkcs10dump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/pkcs10dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/pkcs10dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/fast_importer_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/fast_importer_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/fast_importer_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/fast_importer_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/standalone.py" -- HTTP --> "URL::https://github.com/erezsh/lark"
+  "backend/python_jobs/tools/standalone.py" -- HTTP --> "URL::https://mozilla.org/MPL/2.0/."
+  "backend/python_jobs/tools/standalone.py" -- HTTP --> "URL::https://stackoverflow.com/questions/1769332/script-to-remove-python-comments-docstrings"
+  "backend/python_jobs/tools/standalone.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/tools/standalone.py" -- BQ --> "BQ::lark.tools.standalone"
+  "backend/python_jobs/tools/standalone.py" -- BQ --> "BQ::ns.out.close"
+  "backend/python_jobs/tools/standalone.py" -- BQ --> "BQ::ns.grammar_file.close"
+  "backend/python_jobs/tools/platform_args_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/platform_args_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/platform_args_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/crmfdump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/crmfdump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/crmfdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/crmfdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/ocspclient.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/ocspclient.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/ocspclient.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/ocspclient.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/ocspclient.py" -- BQ --> "BQ::encoder.encoder.BitStringEncoder"
+  "backend/python_jobs/tools/ocspclient.py" -- BQ --> "BQ::encoder.encoder.BitStringEncoder"
+  "backend/python_jobs/tools/ocsprspdump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/ocsprspdump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/ocsprspdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/ocsprspdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/fast_puller_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/fast_puller_.py" -- HTTP --> "URL::https://docs.docker.com/registry/spec/manifest-v2-2/"
+  "backend/python_jobs/tools/fast_puller_.py" -- HTTP --> "URL::https://github.com/opencontainers/image-spec"
+  "backend/python_jobs/tools/fast_puller_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/fast_puller_.py" -- BQ --> "BQ::containerregistry.client.v2"
+  "backend/python_jobs/tools/fast_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/fast_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/fast_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/fast_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/fast_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/fast_puller_.py" -- BQ --> "BQ::docs.docker.com"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- HTTP --> "URL::https://www.google.com/accounts/ClientLogin"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::googlecloudsdk.appengine._internal"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::urllib.error.HTTPError"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::self.opener.set_strict"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::self.opener.set_save_request_data"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::self.fp.read"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::self.fp.readline"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::self.fp.close"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::www.google.com"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::self.requests.append"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::self.request_data.append"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::self.ordered_responses.pop"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::io.BytesIO.__init__"
+  "backend/python_jobs/tools/appengine_rpc_test_util.py" -- BQ --> "BQ::io.BytesIO.__init__"
+  "backend/python_jobs/tools/cmcdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/cmcdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/logging_setup_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/logging_setup_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/logging_setup_.py" -- BQ --> "BQ::logging.root.addHandler"
+  "backend/python_jobs/tools/logging_setup_.py" -- BQ --> "BQ::logging.root.setLevel"
+  "backend/python_jobs/tools/docker_pusher_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/docker_pusher_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/docker_pusher_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/docker_pusher_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/docker_pusher_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/image_digester_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/image_digester_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/image_digester_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/image_digester_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/cvt_pyparsing_pep8_names.py" -- BQ --> "BQ::pp.util.make_compressed_re"
+  "backend/python_jobs/tools/cvt_pyparsing_pep8_names.py" -- BQ --> "BQ::sys.stdout.writelines"
+  "backend/python_jobs/tools/__init__.py" -- BQ --> "BQ::namespace.start.append"
+  "backend/python_jobs/tools/pkcs8dump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/pkcs8dump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/pkcs8dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/pkcs8dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/dispatch_xml_parser.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/dispatch_xml_parser.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/dispatch_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/dispatch_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/dispatch_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/dispatch_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/dispatch_xml_parser.py" -- BQ --> "BQ::self.dispatch_entries.append"
+  "backend/python_jobs/tools/x509dump-rfc5280.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/x509dump-rfc5280.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/x509dump-rfc5280.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/x509dump-rfc5280.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/patched_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/patched_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/patched_.py" -- BQ --> "BQ::os.path.isfile"
+  "backend/python_jobs/tools/patched_.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/tools/cmpdump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/cmpdump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/cmpdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/cmpdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/context_util.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/context_util.py" -- HTTP --> "URL::https://<hostname>/id/<repo_id>"
+  "backend/python_jobs/tools/context_util.py" -- HTTP --> "URL::https://<hostname>/p/<project_id>"
+  "backend/python_jobs/tools/context_util.py" -- HTTP --> "URL::https://<hostname>/p/<project_id>/r/<repo_name>"
+  "backend/python_jobs/tools/context_util.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/context_util.py" -- BQ --> "BQ::googlecloudsdk.appengine._internal"
+  "backend/python_jobs/tools/context_util.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/tools/context_util.py" -- BQ --> "BQ::os.path.exists"
+  "backend/python_jobs/tools/context_util.py" -- BQ --> "BQ::os.path.exists"
+  "backend/python_jobs/tools/context_util.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/tools/ocspreqdump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/ocspreqdump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/ocspreqdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/ocspreqdump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/pkcs1dump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/pkcs1dump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/pkcs1dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/pkcs1dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/crldump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/crldump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/crldump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/crldump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/docker_puller_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/docker_puller_.py" -- HTTP --> "URL::https://docs.docker.com/registry/spec/manifest-v2-2/"
+  "backend/python_jobs/tools/docker_puller_.py" -- HTTP --> "URL::https://github.com/opencontainers/image-spec"
+  "backend/python_jobs/tools/docker_puller_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/docker_puller_.py" -- BQ --> "BQ::containerregistry.client.v2"
+  "backend/python_jobs/tools/docker_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/docker_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/docker_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/docker_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/docker_puller_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/docker_puller_.py" -- BQ --> "BQ::docs.docker.com"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.queue_xml.queues"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.queue_xml.total_storage_limit"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.queue_xml.queues"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::queue.acl.user_emails"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::queue.acl.writer_emails"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.retry_parameters.GetYamlStatementsList"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::self.acl.GetYamlStatementsList"
+  "backend/python_jobs/tools/queue_xml_parser.py" -- BQ --> "BQ::sys.stdin.read"
+  "backend/python_jobs/tools/app_engine_config_exception.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/app_engine_config_exception.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/fast_flatten_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/fast_flatten_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/fast_flatten_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/fast_pusher_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/fast_pusher_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/fast_pusher_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/fast_pusher_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/fast_pusher_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/pkcs7dump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/pkcs7dump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/pkcs7dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/pkcs7dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/xml_parser_utils.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/xml_parser_utils.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/xml_parser_utils.py" -- BQ --> "BQ::node.tag.rsplit"
+  "backend/python_jobs/tools/xml_parser_utils.py" -- BQ --> "BQ::node.attrib.get"
+  "backend/python_jobs/tools/xml_parser_utils.py" -- BQ --> "BQ::node.text.strip"
+  "backend/python_jobs/tools/docker_appender_.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/docker_appender_.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/docker_appender_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/docker_appender_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/docker_appender_.py" -- BQ --> "BQ::containerregistry.client.v2_2"
+  "backend/python_jobs/tools/dos_xml_parser.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/dos_xml_parser.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/dos_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/dos_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/dos_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/dos_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/dos_xml_parser.py" -- BQ --> "BQ::self.blacklist_entries.append"
+  "backend/python_jobs/tools/dos_xml_parser.py" -- BQ --> "BQ::entry.subnet.split"
+  "backend/python_jobs/tools/snmpget.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/snmpget.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/snmpget.py" -- BQ --> "BQ::pyasn1.codec.ber"
+  "backend/python_jobs/tools/snmpget.py" -- BQ --> "BQ::pyasn1.codec.ber"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::http://%s/_ah/login"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::http://code.google.com/apis/accounts/AuthForInstalledApps.html"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::http://localhost/"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::http://pypi.python.org/pypi/ssl"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::https://%s/accounts/ClientLogin"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::https://developers.google.com/appengine/kb/general#rpcssl"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::https://www.google.com/accounts/DisplayUnlockCaptcha\n"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::https://www.google.com/accounts/ServiceLogin"
+  "backend/python_jobs/tools/appengine_rpc.py" -- HTTP --> "URL::https://www\.google\.com/a/[a-z0-9\.\-]+/ServiceLogin"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::googlecloudsdk.core.util"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::googlecloudsdk.appengine._internal"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.BaseHandler"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.error.HTTPError"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.HTTPHandler"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.HTTPDefaultErrorHandler"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.HTTPCookieProcessor"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.HTTPSHandler"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.HTTPErrorProcessor"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::http.cookiejar.MozillaCookieJar"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.ProxyHandler"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::http.cookiejar.LoadError"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.OpenerDirector"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.Request"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.request.UnknownHandler"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.response.addinfourl"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::urllib.parse.urlencode"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.extra_headers.update"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.host.startswith"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.extra_headers.items"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.host.split"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.host_override.split"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::www.google.com"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.opener.open"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::os.environ.get"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.opener.open"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::code.google.com"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::www.google.com"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.scheme.upper"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.opener.open"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::www.google.com"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::os.path.normpath"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::os.path.dirname"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::os.path.exists"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::pypi.python.org"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::developers.google.com"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.filename"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.filename"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.save"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.filename"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::os.path.expanduser"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::os.path.exists"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.filename"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.load"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.filename"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::e.__class__.__name__"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.filename"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.filename"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::e.__class__.__name__"
+  "backend/python_jobs/tools/appengine_rpc.py" -- BQ --> "BQ::self.cookie_jar.filename"
+  "backend/python_jobs/tools/value_mixin.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/value_mixin.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/value_mixin.py" -- BQ --> "BQ::self.__dict__.items"
+  "backend/python_jobs/tools/value_mixin.py" -- BQ --> "BQ::self.__class__.__name__"
+  "backend/python_jobs/tools/x509dump.py" -- HTTP --> "URL::http://pyasn1.sf.net/license.html"
+  "backend/python_jobs/tools/x509dump.py" -- BQ --> "BQ::pyasn1.sf.net"
+  "backend/python_jobs/tools/x509dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/x509dump.py" -- BQ --> "BQ::pyasn1.codec.der"
+  "backend/python_jobs/tools/nearley.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/tools/nearley.py" -- BQ --> "BQ::os.path.abspath"
+  "backend/python_jobs/tools/nearley.py" -- BQ --> "BQ::os.path.dirname"
+  "backend/python_jobs/tools/nearley.py" -- BQ --> "BQ::n2l.extra_rules.items"
+  "backend/python_jobs/tools/nearley.py" -- BQ --> "BQ::n2l.alias_js_code.items"
+  "backend/python_jobs/tools/nearley.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/tools/nearley.py" -- BQ --> "BQ::os.path.abspath"
+  "backend/python_jobs/tools/nearley.py" -- BQ --> "BQ::os.path.dirname"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.tools"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine._internal"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.googlecron"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- BQ --> "BQ::googlecloudsdk.appengine.googlecron"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- BQ --> "BQ::self.errors.append"
+  "backend/python_jobs/tools/cron_xml_parser.py" -- BQ --> "BQ::self.crons.append"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- HTTP --> "URL::https://www.instagram.com/accounts/login/"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- HTTP --> "URL::https://www.instagram.com/p/DHcQE-gPk_F/"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::selenium.webdriver.chrome"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::selenium.webdriver.common"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::selenium.webdriver.support"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::selenium.webdriver.support"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::os.path.dirname"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::os.path.abspath"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::www.instagram.com"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::www.instagram.com"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/recolector/diagnostico_selector.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- HTTP --> "URL::https://www.tiktok.com/@usuario/video/1234567890"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::selenium.webdriver.chrome"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::selenium.webdriver.common"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::selenium.webdriver.support"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::selenium.webdriver.support"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::os.path.dirname"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::os.path.abspath"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::www.tiktok.com"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::el.text.strip"
+  "backend/python_jobs/recolector/tiktok_scraper.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- HTTP --> "URL::https://www.instagram.com/accounts/login/"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::selenium.webdriver.chrome"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::selenium.webdriver.common"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::selenium.webdriver.support"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::selenium.webdriver.support"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::os.path.dirname"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::os.path.abspath"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::www.instagram.com"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/recolector/instagram_scraper.py" -- BQ --> "BQ::el.text.strip"
+  "backend/python_jobs/validador_web/main.py" -- HTTP --> "URL::https://www.instagram.com/p/xyz123/"
+  "backend/python_jobs/validador_web/main.py" -- BQ --> "BQ::www.instagram.com"
+  "backend/python_jobs/validador_web/main.py" -- BQ --> "BQ::127.0.0"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::os.path.dirname"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::os.path.abspath"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::sys.path.append"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::galletas-piloto-ju-250726.gmx_week_2025_09_04_2025_09_11.vw_comments_app_api"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::galletas-piloto-ju-250726.gmx_week_2025_09_04_2025_09_11.comment_metrics"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::request.args.get"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::request.args.get"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::request.args.get"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::request.args.get"
+  "backend/python_jobs/Analizer/comment_metrics_job.py" -- BQ --> "BQ::request.args.get"
+  "backend/python_jobs/Analizer/comment_analizer.py" -- BQ --> "BQ::google.api_core.exceptions"
+  "backend/python_jobs/Analizer/comment_analizer.py" -- BQ --> "BQ::os.path.exists"
+  "backend/python_jobs/Analizer/comment_analizer.py" -- BQ --> "BQ::project.dataset.table"
+  "backend/python_jobs/Analizer/comment_analizer.py" -- BQ --> "BQ::proyecto.dataset.tabla"
+  "backend/python_jobs/orquestador/reparar_script.py" -- HTTP --> "URL::https://api.brightdata.com/request"
+  "backend/python_jobs/orquestador/reparar_script.py" -- BQ --> "BQ::api.brightdata.com"
+  "backend/python_jobs/orquestador/reparar_script.py" -- BQ --> "BQ::requests.exceptions.HTTPError"
+  "backend/python_jobs/orquestador/reparar_script.py" -- BQ --> "BQ::e.response.status_code"
+  "backend/python_jobs/orquestador/reparar_script.py" -- BQ --> "BQ::e.response.text"
+  "backend/python_jobs/orquestador/reparar_script.py" -- BQ --> "BQ::e.response.status_code"
+  "backend/python_jobs/orquestador/reparar_script.py" -- BQ --> "BQ::requests.exceptions.RequestException"
+  "backend/python_jobs/orquestador/reparar_script.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/orquestador/main.py" -- HTTP --> "URL::https://us-central1-galletas-piloto-ju-250726.cloudfunctions.net/analizar_texto_individual"
+  "backend/python_jobs/orquestador/main.py" -- BQ --> "BQ::google.auth.transport"
+  "backend/python_jobs/orquestador/main.py" -- BQ --> "BQ::google.oauth2.id_token"
+  "backend/python_jobs/orquestador/main.py" -- BQ --> "BQ::us-central1-galletas-piloto-ju-250726.cloudfunctions.net"
+  "backend/python_jobs/orquestador/main.py" -- BQ --> "BQ::google.auth.transport"
+  "backend/python_jobs/orquestador/main.py" -- BQ --> "BQ::google.oauth2.id_token"
+  "backend/python_jobs/conversion/convert_yaml.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/conversion/convert_yaml.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/conversion/convert_yaml.py" -- BQ --> "BQ::googlecloudsdk.appengine.admin"
+  "backend/python_jobs/conversion/convert_yaml.py" -- BQ --> "BQ::googlecloudsdk.appengine.admin"
+  "backend/python_jobs/conversion/yaml_schema_v1.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/conversion/yaml_schema_v1.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/conversion/yaml_schema_v1.py" -- BQ --> "BQ::googlecloudsdk.appengine.admin"
+  "backend/python_jobs/conversion/yaml_schema_v1.py" -- BQ --> "BQ::googlecloudsdk.appengine.admin"
+  "backend/python_jobs/conversion/__init__.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/conversion/__init__.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/conversion/yaml_schema_v1beta.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/conversion/yaml_schema_v1beta.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/conversion/yaml_schema_v1beta.py" -- BQ --> "BQ::googlecloudsdk.appengine.admin"
+  "backend/python_jobs/conversion/yaml_schema_v1beta.py" -- BQ --> "BQ::googlecloudsdk.appengine.admin"
+  "backend/python_jobs/conversion/converters.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/conversion/converters.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/conversion/converters.py" -- BQ --> "BQ::googlecloudsdk.appengine.api"
+  "backend/python_jobs/conversion/converters.py" -- BQ --> "BQ::google.appengine.api"
+  "backend/python_jobs/conversion/converters.py" -- BQ --> "BQ::googlecloudsdk.appengine.api"
+  "backend/python_jobs/conversion/converters.py" -- BQ --> "BQ::google.appengine.api"
+  "backend/python_jobs/conversion/converters.py" -- BQ --> "BQ::os.path.join"
+  "backend/python_jobs/conversion/schema.py" -- HTTP --> "URL::http://www.apache.org/licenses/LICENSE-2.0"
+  "backend/python_jobs/conversion/schema.py" -- BQ --> "BQ::www.apache.org"
+  "backend/python_jobs/conversion/schema.py" -- BQ --> "BQ::self.fields.items"
+  "backend/python_jobs/conversion/schema.py" -- BQ --> "BQ::self.element.ConvertValue"

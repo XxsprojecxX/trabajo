@@ -63,7 +63,7 @@ def enviar_a_orquestador(texto_a_analizar, info_archivo, token):
         "id_conversacion": info_archivo.get("id_tarea", "piloto_local"),
         "fuente_principal": {
             "tipo_contenido": "post_creador",
-            "texto_input": texto_a_analizar, # ¡Ahora enviamos solo el texto limpio!
+            "texto": texto_a_analizar, # ¡Ahora enviamos solo el texto limpio!
             "metadatos": {
                 "plataforma": info_archivo.get("plataforma", "desconocida"),
                 "creadora": info_archivo.get("creadora", "desconocida"),

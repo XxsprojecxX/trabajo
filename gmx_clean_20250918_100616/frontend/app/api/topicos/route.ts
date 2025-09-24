@@ -1,8 +1,10 @@
- import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { BigQuery } from '@google-cloud/bigquery'
 import { clusterTopicos } from "@/lib/universes"; // Importamos la función de clustering
 
 export const runtime = 'nodejs'
+export const dynamic = "force-dynamic";
+
 
 // --- DEFINICIÓN DE TIPOS PARA MAYOR CLARIDAD Y SEGURIDAD ---
 

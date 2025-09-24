@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const items = rows.map((row, idx) => normalizeRow(row.payload, idx));
+    const items = rows.map((row: any, idx: number) => normalizeRow(row.payload, idx));
     const universes = buildUniverses(items);
 
     return NextResponse.json({ ok: true, view: VIEW_FQN, count: items.length, items, universes });

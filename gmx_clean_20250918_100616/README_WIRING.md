@@ -13,3 +13,8 @@ Estructura limpia y lista:
 cd gmx_clean_20250918_100616
 cp .env.template .env
 ./env-verify.sh
+
+
+## Variables de entorno
+
+- `COMMENTS_METRICS_TABLE_FQN`: tabla completa de BigQuery (`proyecto.dataset.tabla`) opcional para persistir los agregados de comentarios. Si se deja vacía, la API calculará las métricas en memoria.

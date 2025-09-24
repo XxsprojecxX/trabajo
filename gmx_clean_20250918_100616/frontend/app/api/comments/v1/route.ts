@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { BigQuery } from "@google-cloud/bigquery";
+import { aggregateMetricsFromRows } from "./metrics";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,7 @@ export async function GET(req: NextRequest) {
     const [rows] = await bq.query(options);
     const metricsTable = process.env.COMMENTS_METRICS_TABLE_FQN;
     let aggregates: { by_post: any[]; by_creator: any[] } = { by_post: [], by_creator: [] };
+    let shouldComputeFallback = true;
 
     if (metricsTable) {
       const metricsSql = `
@@ -79,13 +81,20 @@ export async function GET(req: NextRequest) {
 
       try {
         const [metricRows] = await bq.query(metricOptions);
-        aggregates = {
-          by_post: metricRows.filter((row: any) => row.aggregated_type === "post"),
-          by_creator: metricRows.filter((row: any) => row.aggregated_type === "creator"),
-        };
+        if (Array.isArray(metricRows) && metricRows.length > 0) {
+          aggregates = {
+            by_post: metricRows.filter((row: any) => row.aggregated_type === "post"),
+            by_creator: metricRows.filter((row: any) => row.aggregated_type === "creator"),
+          };
+          shouldComputeFallback = false;
+        }
       } catch (metricError) {
         console.error("Error leyendo métricas agregadas", metricError);
       }
+    }
+
+    if (shouldComputeFallback) {
+      aggregates = aggregateMetricsFromRows(Array.isArray(rows) ? rows : []);
     }
 
     return Response.json(

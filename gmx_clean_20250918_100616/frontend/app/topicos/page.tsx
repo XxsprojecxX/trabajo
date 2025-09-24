@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent as ReactMouseEvent } from 'react';
@@ -133,7 +133,7 @@ function clusterALMA(rows: Topico[]): AlmaCluster[] {
 
   // Unión de componentes (Union-Find)
   const parent = Array.from({length:N}, (_,i)=>i);
-  const find = (x:number)=> parent[x]===x?x:(parent[x]=find(parent[x]));
+  const find = (x:number): number => parent[x]===x?x:(parent[x]=find(parent[x]));
   const unite = (a:number,b:number)=> { a=find(a); b=find(b); if(a!==b) parent[b]=a; };
   links.forEach(([i,j])=>unite(i,j));
 
@@ -303,7 +303,7 @@ type Emociones = Partial<Record<
   | 'nostalgia' | 'ternura' | 'orgullo' | 'estres' | 'culpa' | 'cansancio',
   number
 >>;
-type EstadoResonancia = { estado: string; porcentaje: number; intensidad: 'alta'|'media'|'baja' };
+type EstadoResonancia = { estado: string; porcentaje?: number; intensidad?: 'alta'|'media'|'baja' };
 
 export interface Topico {
   id: string;
@@ -332,6 +332,7 @@ export interface Topico {
   universeConfianza?: number;
   universeColor?: string;
   universeSize?: number;
+  last_ts?: string;
 }
 type GraphDisplayNode = Topico & { x: number; y: number; radius: number };
 type GraphDisplayLink = { source: string; target: string };
@@ -617,7 +618,7 @@ function PilarLabel(p?: string) {
 /** Heurística: decide pilar a partir de ejes/categoría si no hay label confiable */
 function resolvePilar(t: Topico): 'DIARY OF REAL MOMS' | 'RECIPES THAT HUG' | 'REAL FAMILY MOMENTS' | 'AUTHENTIC TREATS' {
   const direct = PilarLabel(t.pilarAsociado ?? t.pilar ?? '');
-  if (direct && PILARES[direct]) return direct as keyof typeof PILARES;
+  if (direct && PILARES[direct as keyof typeof PILARES]) return direct as 'DIARY OF REAL MOMS' | 'RECIPES THAT HUG' | 'REAL FAMILY MOMENTS' | 'AUTHENTIC TREATS';
 
   const ejes = (t.ejesDetectados || []).map(e => e.toLowerCase());
   const cat = (t.categoria || '').toLowerCase();
@@ -735,7 +736,7 @@ function normalizeEmociones(value: any): Emociones | undefined {
   const out: Emociones = {};
   Object.entries(obj as Record<string, any>).forEach(([key, val]) => {
     const num = coerceNumber(val);
-    if (num !== undefined) out[key] = clampPercentage(num);
+    if (num !== undefined) out[key as keyof Emociones] = clampPercentage(num);
   });
   return Object.keys(out).length ? out : undefined;
 }
@@ -1639,9 +1640,199 @@ const { nodes: graphNodes, links: graphLinks } = useForceGraph(topicosFiltrados,
                 </div>
                 </div>
             </div>
+        </div>
+
+        {/* ====== CONVERSATION CLOUD ALMA (bloque completo) ====== */}
+        <div className="mt-8 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl shadow-lg overflow-hidden border border-purple-200">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-700 px-8 py-6">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                    <i className="ri-cloud-line text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h2 className="text-2xl font-bold text-white">Conversation Cloud ALMA</h2>
+                    <p className="text-purple-100">Palabras y frases que conforman los universos maternos auténticos</p>
+                </div>
+                </div>
+                <div className="text-right">
+                <div className="text-3xl font-bold text-white">247</div>
+                <div className="text-sm text-purple-100">palabras únicas</div>
+                </div>
+            </div>
+            </div>
+
+            <div className="p-8">
+            <div className="grid lg:grid-cols-4 gap-8">
+                {/* Nube de palabras */}
+                <div className="lg:col-span-3">
+                <div className="relative bg-white rounded-xl p-8 h-96 overflow-hidden shadow-sm border border-gray-200">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white via-purple-50/30 to-indigo-50/30" />
+
+                    {/* Líneas suaves animadas */}
+                    <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
+                    <defs>
+                        <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="rgba(139, 92, 246, 0.2)" />
+                        <stop offset="100%" stopColor="rgba(99, 102, 241, 0.2)" />
+                        </linearGradient>
+                    </defs>
+                    <line x1="25%" y1="15%" x2="45%" y2="35%" stroke="url(#connectionGradient)" strokeWidth="1" className="animate-pulse" />
+                    <line x1="65%" y1="25%" x2="30%" y2="60%" stroke="url(#connectionGradient)" strokeWidth="1" className="animate-pulse" style={{ animationDelay: '1s' }} />
+                    <line x1="70%" y1="15%" x2="55%" y2="20%" stroke="url(#connectionGradient)" strokeWidth="1" className="animate-pulse" style={{ animationDelay: '2s' }} />
+                    <line x1="20%" y1="80%" x2="45%" y2="35%" stroke="url(#connectionGradient)" strokeWidth="1" className="animate-pulse" style={{ animationDelay: '0.5s' }} />
+                    <line x1="75%" y1="65%" x2="60%" y2="45%" stroke="url(#connectionGradient)" strokeWidth="1" className="animate-pulse" style={{ animationDelay: '1.5s' }} />
+                    </svg>
+
+                    {/* Palabras principales */}
+                    <div
+                    className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300 hover:scale-110"
+                    style={{ left: '25%', top: '15%', zIndex: 20 }}
+                    title="Performance vs Realidad Maternal - Núcleo"
+                    onClick={() => handlePalabraClick('maternidad')}
+                    >
+                    <span
+                        className="font-inter font-black drop-shadow-lg hover:drop-shadow-xl transition-all duration-300"
+                        style={{ fontSize: '70px', color: '#8b5cf6', textShadow: '0 4px 8px rgba(139, 92, 246, 0.3)' }}
+                    >
+                        maternidad
+                    </span>
+                    </div>
+
+                    <div
+                    className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300 hover:scale-110"
+                    style={{ left: '65%', top: '25%', zIndex: 19 }}
+                    title="Autenticidad - Núcleo"
+                    onClick={() => handlePalabraClick('autenticidad')}
+                    >
+                    <span
+                        className="font-inter font-black drop-shadow-lg hover:drop-shadow-xl transition-all duration-300"
+                        style={{ fontSize: '65px', color: '#8b5cf6', textShadow: '0 4px 8px rgba(139, 92, 246, 0.3)' }}
+                    >
+                        autenticidad
+                    </span>
+                    </div>
+
+                    <div
+                    className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300 hover:scale-110"
+                    style={{ left: '45%', top: '35%', zIndex: 18 }}
+                    title="Cocina como Refugio Emocional - Núcleo"
+                    onClick={() => handlePalabraClick('cocina')}
+                    >
+                    <span
+                        className="font-inter font-black drop-shadow-lg hover:drop-shadow-xl transition-all duration-300"
+                        style={{ fontSize: '60px', color: '#f97316', textShadow: '0 4px 8px rgba(249, 115, 22, 0.3)' }}
+                    >
+                        cocina
+                    </span>
+                    </div>
+                </div>
+                </div>
+
+                {/* Panel lateral derecho */}
+                <div className="space-y-6">
+                {/* Convenciones de Tópicos */}
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 className="font-bold text-gray-900 mb-4 flex items-center">
+                    <i className="ri-palette-line text-purple-600 mr-2"></i>
+                    Convenciones de Tópicos
+                    </h3>
+                    <div className="space-y-3">
+                    {[
+                        { c: '#8b5cf6', t: 'Performance vs Realidad Maternal', d: 'Auténtico vs Instagram perfecto' },
+                        { c: '#f97316', t: 'Cocina como Refugio Emocional', d: 'Santuario familiar y emocional' },
+                        { c: '#3b82f6', t: 'Conexión Intergeneracional', d: 'Sabiduría entre generaciones' },
+                        { c: '#10b981', t: 'Rituales de Descompresión', d: 'Mindfulness y bienestar maternal' },
+                        { c: '#6366f1', t: 'Escape Creativo Familiar', d: 'Arte y creatividad en familia' },
+                        { c: '#ec4899', t: 'Momentos de Placer Consciente', d: 'Autocuidado sin culpa maternal' },
+                    ].map((it) => (
+                        <div key={it.t} className="flex items-start space-x-3">
+                        <div className="w-4 h-4 rounded-full flex-shrink-0 mt-1" style={{ backgroundColor: it.c }}></div>
+                        <div>
+                            <div className="font-medium text-gray-900 text-sm">{it.t}</div>
+                            <div className="text-xs text-gray-600 leading-relaxed">{it.d}</div>
+                        </div>
+                        </div>
+                    ))}
+                    </div>
+                </div>
+
+                {/* Jerarquía de Frecuencias */}
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 className="font-bold text-gray-900 mb-4 flex items-center">
+                    <i className="ri-text-direction-r text-indigo-600 mr-2"></i>
+                    Jerarquía de Frecuencias
+                    </h3>
+                    <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                        <span className="text-4xl font-black text-gray-800">Núcleo</span>
+                        <span className="text-xs text-gray-600">Ultra Bold (900)</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold text-gray-700">Soporte</span>
+                        <span className="text-xs text-gray-600">Bold (700)</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-lg font-medium text-gray-600">Contexto</span>
+                        <span className="text-xs text-gray-600">Medium (500)</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm font-light text-gray-500">Detalle</span>
+                        <span className="text-xs text-gray-600">Light (300)</span>
+                    </div>
+                    </div>
+                </div>
+
+                {/* Estadísticas Vivas */}
+                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border border-purple-200">
+                    <h3 className="font-bold text-gray-900 mb-4 flex items-center">
+                    <i className="ri-bar-chart-2-line text-purple-600 mr-2"></i>
+                    Estadísticas Vivas
+                    </h3>
+                    <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">Palabras Únicas</span>
+                        <span className="font-bold text-purple-600">247</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">Frases Conectoras</span>
+                        <span className="font-bold text-indigo-600">89</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">Menciones Totales</span>
+                        <span className="font-bold text-green-600">156K</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">Temáticas Dominantes</span>
+                        <span className="font-bold text-orange-600">6</span>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-purple-200">
+                        <div className="flex items-center text-xs text-purple-700">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                        <span>Actualización en tiempo real • Sistema ALMA activo</span>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>{/* /right column */}
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4 text-sm text-gray-700">
+                    <div className="flex items-center space-x-2">
+                    <i className="ri-dna-line text-purple-600"></i>
+                    <span>Análisis ALMA: 6 ejes técnicos procesando conversaciones auténticas</span>
+                    </div>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-600">
+                    <span>Precisión: 94.2%</span>
+                    <span>•</span>
+                    <span>Actualizado: En vivo</span>
+                </div>
+                </div>
             </div>
         </div>
-        {/* ====== /CONVERSATION CLOUD ====== */}
 
         {/* ====== Modal Explicación ALMA ====== */}
         {mostrarExplicacionALMA && (
@@ -1665,7 +1856,7 @@ const { nodes: graphNodes, links: graphLinks } = useForceGraph(topicosFiltrados,
                 </div>
 
                 <div className="p-8 space-y-8">
-                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border-l-4 border-purple-500">
+                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
                     <i className="ri-brain-line text-purple-600 mr-3"></i>
                     ¿Qué es el Sistema ALMA?
@@ -1794,7 +1985,7 @@ const { nodes: graphNodes, links: graphLinks } = useForceGraph(topicosFiltrados,
                             <div className="text-2xl font-bold text-purple-600 mb-1">{(topicoSeleccionado as any)?.sentimiento?.positivo ?? 0}%</div>
                             <div className="text-sm font-medium text-gray-700">Sentimiento Positivo</div>
                         </div>
-                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 text-center">
+                        <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 text-center">
                             <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mx-auto mb-3">
                                 <i className="ri-fire-line text-white text-xl"></i>
                             </div>

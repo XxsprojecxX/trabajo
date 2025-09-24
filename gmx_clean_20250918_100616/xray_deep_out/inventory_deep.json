@@ -1,0 +1,4902 @@
+{
+  "timestamp": "2025-09-22T15:52:23.594426",
+  "files": [
+    {
+      "file": "xray_deep.py",
+      "group": "otros",
+      "size": 11620,
+      "doc": "",
+      "imports": [
+        "ast",
+        "os",
+        "re",
+        "json"
+      ],
+      "imports_from": [
+        "pathlib",
+        "textwrap",
+        "datetime"
+      ],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [
+        "project.dataset.table",
+        "galletas-piloto-ju-250726.analisis_galletas.resultados_analizados",
+        "fn.args.args",
+        "m.args.args"
+      ],
+      "bq_schema_snippets": [
+        "    if \"bigquery.SchemaField(\" in src:\n        # guardamos un snippet para inspección\n        snip = []"
+      ],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "read",
+          "args": [
+            "p"
+          ],
+          "returns": null,
+          "lineno": 10,
+          "doc": ""
+        },
+        {
+          "name": "guess_group",
+          "args": [
+            "path"
+          ],
+          "returns": "str",
+          "lineno": 14,
+          "doc": ""
+        },
+        {
+          "name": "extract",
+          "args": [
+            "p"
+          ],
+          "returns": null,
+          "lineno": 22,
+          "doc": ""
+        },
+        {
+          "name": "mod_candidates",
+          "args": [
+            "p"
+          ],
+          "returns": null,
+          "lineno": 131,
+          "doc": ""
+        },
+        {
+          "name": "w",
+          "args": [
+            "name",
+            "lines"
+          ],
+          "returns": null,
+          "lineno": 203,
+          "doc": ""
+        },
+        {
+          "name": "section_list",
+          "args": [
+            "title",
+            "items"
+          ],
+          "returns": null,
+          "lineno": 205,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "ingestion/brightdata_connector.py",
+      "group": "ingestion",
+      "size": 1361,
+      "doc": "",
+      "imports": [
+        "os",
+        "requests"
+      ],
+      "imports_from": [
+        "dotenv"
+      ],
+      "env_vars": [
+        "BD_API_KEY",
+        "BRIGHTDATA_API_KEY"
+      ],
+      "urls": [],
+      "bq_fqn": [
+        "os.path.join",
+        "os.path.dirname"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "get_bd_api_key",
+          "args": [],
+          "returns": "str",
+          "lineno": 7,
+          "doc": ""
+        },
+        {
+          "name": "bd_headers",
+          "args": [
+            "use_x_api_key"
+          ],
+          "returns": "dict",
+          "lineno": 14,
+          "doc": ""
+        },
+        {
+          "name": "bd_get",
+          "args": [
+            "url"
+          ],
+          "returns": "Response",
+          "lineno": 19,
+          "doc": ""
+        },
+        {
+          "name": "bd_post",
+          "args": [
+            "url",
+            "json_body"
+          ],
+          "returns": "Response",
+          "lineno": 23,
+          "doc": ""
+        },
+        {
+          "name": "safe_json",
+          "args": [
+            "resp"
+          ],
+          "returns": null,
+          "lineno": 27,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "maestro_ejecucion/main.py",
+      "group": "backend-orquestador",
+      "size": 6006,
+      "doc": "",
+      "imports": [
+        "requests",
+        "json",
+        "os",
+        "glob",
+        "time",
+        "subprocess"
+      ],
+      "imports_from": [
+        "bs4"
+      ],
+      "env_vars": [],
+      "urls": [
+        "https://us-central1-galletas-piloto-ju-250726.cloudfunctions.net/orquestar_analisis_conversacion"
+      ],
+      "bq_fqn": [
+        "us-central1-galletas-piloto-ju-250726.cloudfunctions.net",
+        "requests.exceptions.RequestException",
+        "os.path.basename"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [
+        "manifiesto.json"
+      ],
+      "writes": [],
+      "functions": [
+        {
+          "name": "get_gcloud_token",
+          "args": [],
+          "returns": null,
+          "lineno": 15,
+          "doc": "Obtiene un token de identidad de gcloud para autenticar la petición."
+        },
+        {
+          "name": "extraer_texto_de_html",
+          "args": [
+            "html_crudo",
+            "plataforma"
+          ],
+          "returns": null,
+          "lineno": 25,
+          "doc": "Usa BeautifulSoup para extraer el texto principal de la descripción de un post."
+        },
+        {
+          "name": "enviar_a_orquestador",
+          "args": [
+            "texto_a_analizar",
+            "info_archivo",
+            "token"
+          ],
+          "returns": null,
+          "lineno": 58,
+          "doc": "Envía los datos extraídos a la Cloud Function Orquestador."
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "xray_out/xray_inventory.py",
+      "group": "otros",
+      "size": 7852,
+      "doc": "",
+      "imports": [
+        "ast",
+        "os",
+        "sys",
+        "re",
+        "json",
+        "hashlib"
+      ],
+      "imports_from": [
+        "pathlib",
+        "textwrap",
+        "collections"
+      ],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [
+        "n.func.attr",
+        "a.value.count",
+        "n.func.id",
+        "n.args.args",
+        "n.args.args",
+        "google.cloud.bigquery"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "read",
+          "args": [
+            "p"
+          ],
+          "returns": null,
+          "lineno": 10,
+          "doc": ""
+        },
+        {
+          "name": "module_candidates",
+          "args": [
+            "p"
+          ],
+          "returns": null,
+          "lineno": 14,
+          "doc": ""
+        },
+        {
+          "name": "extract_info",
+          "args": [
+            "py_path"
+          ],
+          "returns": null,
+          "lineno": 23,
+          "doc": ""
+        },
+        {
+          "name": "gaps_for",
+          "args": [
+            "info"
+          ],
+          "returns": null,
+          "lineno": 114,
+          "doc": ""
+        },
+        {
+          "name": "has_cycle",
+          "args": [],
+          "returns": null,
+          "lineno": 138,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": [
+        "Import sospechoso: usar 'requests'"
+      ]
+    },
+    {
+      "file": "backend/python_jobs/tools/serialize.py",
+      "group": "otros",
+      "size": 965,
+      "doc": "",
+      "imports": [
+        "sys",
+        "json",
+        "argparse"
+      ],
+      "imports_from": [
+        "lark.grammar",
+        "lark.lexer",
+        "lark.tools"
+      ],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [
+        "lark.tools.serialize"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "serialize",
+          "args": [
+            "lark_inst",
+            "outfile"
+          ],
+          "returns": null,
+          "lineno": 15,
+          "doc": ""
+        },
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 23,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/append_memoria.py",
+      "group": "otros",
+      "size": 669,
+      "doc": "",
+      "imports": [
+        "json",
+        "sys",
+        "hashlib",
+        "datetime"
+      ],
+      "imports_from": [
+        "pathlib"
+      ],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [
+        "sys.stdin.read",
+        "datetime.datetime.now"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/appengine_rpc_httplib2.py",
+      "group": "otros",
+      "size": 20470,
+      "doc": "Library with a variant of appengine_rpc using httplib2.\n\nThe httplib2 module offers some of the features in appengine_rpc, with\none important one being a simple integration point for OAuth2 integration.",
+      "imports": [
+        "io",
+        "logging",
+        "os",
+        "random",
+        "re",
+        "time",
+        "urllib",
+        "httplib2",
+        "urllib2"
+      ],
+      "imports_from": [
+        "__future__",
+        "oauth2client",
+        "oauth2client",
+        "oauth2client",
+        "googlecloudsdk.core.util",
+        "googlecloudsdk.appengine.tools.value_mixin",
+        "googlecloudsdk.appengine._internal"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://%s/_ah/login",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "https://%s/o/oauth2/token",
+        "https://www.google.com/accounts/ServiceLogin",
+        "https://www\\.google\\.com/a/[a-z0-9.-]+/ServiceLogin"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.core.util",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine._internal",
+        "urllib.error.HTTPError",
+        "urllib.parse.urlencode",
+        "googlecloudsdk.appengine.tools",
+        "self.cache.get",
+        "self.cache.pop",
+        "os.path.normpath",
+        "os.path.join",
+        "os.path.dirname",
+        "os.path.exists",
+        "self.http.follow_redirects",
+        "self.http.timeout",
+        "self.http.request",
+        "www.google.com",
+        "os.path.expanduser",
+        "accounts.google.com",
+        "self.storage.get",
+        "self.credentials.invalid",
+        "self.oauth2_parameters.access_token",
+        "self.oauth2_parameters.refresh_token",
+        "self.oauth2_parameters.token_uri",
+        "self.oauth_parameters.token_uri",
+        "self.oauth2_parameters.client_id",
+        "self.oauth2_parameters.client_secret",
+        "self.oauth2_parameters.scope",
+        "self.credentials.invalid",
+        "self.credentials.access_token_expired",
+        "self.credentials.authorize",
+        "oauth2client.util.scopes_to_string"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "RaiseHttpError",
+          "args": [
+            "url",
+            "response_info",
+            "response_body",
+            "extra_msg"
+          ],
+          "returns": null,
+          "lineno": 86,
+          "doc": "Raise a urllib2.HTTPError based on an httplib2 response tuple."
+        },
+        {
+          "name": "_ScopesToString",
+          "args": [
+            "scopes"
+          ],
+          "returns": null,
+          "lineno": 491,
+          "doc": "Converts scope value to a string."
+        }
+      ],
+      "classes": [
+        {
+          "name": "Error",
+          "lineno": 62,
+          "doc": "",
+          "methods": []
+        },
+        {
+          "name": "AuthPermanentFail",
+          "lineno": 66,
+          "doc": "Authentication will not succeed in the current context.",
+          "methods": []
+        },
+        {
+          "name": "MemoryCache",
+          "lineno": 70,
+          "doc": "httplib2 Cache implementation which only caches locally.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self"
+              ],
+              "lineno": 73,
+              "doc": ""
+            },
+            {
+              "name": "get",
+              "args": [
+                "self",
+                "key"
+              ],
+              "lineno": 76,
+              "doc": ""
+            },
+            {
+              "name": "set",
+              "args": [
+                "self",
+                "key",
+                "value"
+              ],
+              "lineno": 79,
+              "doc": ""
+            },
+            {
+              "name": "delete",
+              "args": [
+                "self",
+                "key"
+              ],
+              "lineno": 82,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "HttpRpcServerHttpLib2",
+          "lineno": 101,
+          "doc": "A variant of HttpRpcServer which uses httplib2.\n\nThis follows the same interface as appengine_rpc.AbstractRpcServer,\nbut is a totally separate implementation.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "host",
+                "auth_function",
+                "user_agent",
+                "source",
+                "host_override",
+                "extra_headers",
+                "save_cookies",
+                "auth_tries",
+                "account_type",
+                "debug_data",
+                "secure",
+                "ignore_certs",
+                "rpc_tries",
+                "conflict_max_errors",
+                "timeout_max_errors",
+                "http_class",
+                "http_object"
+              ],
+              "lineno": 108,
+              "doc": "Creates a new HttpRpcServerHttpLib2.\n\nArgs:\n  host: The host to send requests to.\n  auth_function: Saved but ignored; may be used by subclasses.\n  user_agent: The user-agent string to send to the server. Specify None to\n    omit the user-agent header.\n  source: Saved but ignored; may be used by subclasses.\n  host_override: The host header to send to the server (defaults to host).\n  extra_headers: A dict of extra headers to append to every request. Values\n    supplied here will override other default headers that are supplied.\n  save_cookies: Saved but ignored; may be used by subclasses.\n  auth_tries: The number of times to attempt auth_function before failing.\n  account_type: Saved but ignored; may be used by subclasses.\n  debug_data: Whether debugging output should include data contents.\n  secure: If the requests sent using Send should be sent over HTTPS.\n  ignore_certs: If the certificate mismatches should be ignored.\n  rpc_tries: The number of rpc retries upon http server error (i.e.\n    Response code >= 500 and < 600) before failing.\n  conflict_max_errors: The number of rpc retries upon http server error\n    (i.e. Response code 409) before failing.\n  timeout_max_errors: The number of rpc retries upon http server timeout\n    (i.e. Response code 408) before failing.\n  http_class: the httplib2.Http subclass to use. Defaults to httplib2.Http.\n  http_object: an httlib2.Http object to use to make requests. If this is\n    provided, http_class is ignored."
+            },
+            {
+              "name": "_Authenticate",
+              "args": [
+                "self",
+                "http",
+                "saw_error"
+              ],
+              "lineno": 171,
+              "doc": "Pre or Re-auth stuff...\n\nArgs:\n  http: An 'Http' object from httplib2.\n  saw_error: If the user has already tried to contact the server.\n    If they have, it's OK to prompt them. If not, we should not be asking\n    them for auth info--it's possible it'll suceed w/o auth."
+            },
+            {
+              "name": "Send",
+              "args": [
+                "self",
+                "request_path",
+                "payload",
+                "content_type",
+                "timeout"
+              ],
+              "lineno": 184,
+              "doc": "Sends an RPC and returns the response.\n\nArgs:\n  request_path: The path to send the request to, eg /api/appversion/create.\n  payload: The body of the request, or None to send an empty request.\n  content_type: The Content-Type header to use.\n  timeout: timeout in seconds; default None i.e. no timeout.\n    (Note: for large requests on OS X, the timeout doesn't work right.)\n  Any keyword arguments are converted into query string parameters.\n\nReturns:\n  The response body, as a string.\n\nRaises:\n  AuthPermanentFail: If authorization failed in a permanent way.\n  urllib2.HTTPError: On most HTTP errors."
+            }
+          ]
+        },
+        {
+          "name": "NoStorage",
+          "lineno": 319,
+          "doc": "A no-op implementation of storage.",
+          "methods": [
+            {
+              "name": "locked_get",
+              "args": [
+                "self"
+              ],
+              "lineno": 322,
+              "doc": ""
+            },
+            {
+              "name": "locked_put",
+              "args": [
+                "self",
+                "credentials"
+              ],
+              "lineno": 325,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "HttpRpcServerOAuth2",
+          "lineno": 329,
+          "doc": "A variant of HttpRpcServer which uses oauth2.\n\nThis variant is specifically meant for interactive command line usage,\nas it will attempt to open a browser and ask the user to enter\ninformation from the resulting web page.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "host",
+                "oauth2_parameters",
+                "user_agent",
+                "source",
+                "host_override",
+                "extra_headers",
+                "save_cookies",
+                "auth_tries",
+                "account_type",
+                "debug_data",
+                "secure",
+                "ignore_certs",
+                "rpc_tries",
+                "timeout_max_errors",
+                "options",
+                "http_class",
+                "http_object"
+              ],
+              "lineno": 361,
+              "doc": "Creates a new HttpRpcServerOAuth2.\n\nArgs:\n  host: The host to send requests to.\n  oauth2_parameters: An object of type OAuth2Parameters (defined above)\n    that specifies all parameters related to OAuth2 authentication. (This\n    replaces the auth_function parameter in the parent class.)\n  user_agent: The user-agent string to send to the server. Specify None to\n    omit the user-agent header.\n  source: Saved but ignored.\n  host_override: The host header to send to the server (defaults to host).\n  extra_headers: A dict of extra headers to append to every request. Values\n    supplied here will override other default headers that are supplied.\n  save_cookies: If the refresh token should be saved.\n  auth_tries: The number of times to attempt auth_function before failing.\n  account_type: Ignored.\n  debug_data: Whether debugging output should include data contents.\n  secure: If the requests sent using Send should be sent over HTTPS.\n  ignore_certs: If the certificate mismatches should be ignored.\n  rpc_tries: The number of rpc retries upon http server error (i.e.\n    Response code >= 500 and < 600) before failing.\n  timeout_max_errors: The number of rpc retries upon http server timeout\n    (i.e. Response code 408) before failing.\n  options: the command line options.\n  http_class: the httplib2.Http subclass to use. Defaults to httplib2.Http.\n  http_object: an httlib2.Http object to use to make requests. If this is\n    provided, http_class is ignored."
+            },
+            {
+              "name": "_Authenticate",
+              "args": [
+                "self",
+                "http",
+                "needs_auth"
+              ],
+              "lineno": 437,
+              "doc": "Pre or Re-auth stuff...\n\nThis will attempt to avoid making any OAuth related HTTP connections or\nuser interactions unless it's needed.\n\nArgs:\n  http: An 'Http' object from httplib2.\n  needs_auth: If the user has already tried to contact the server.\n    If they have, it's OK to prompt them. If not, we should not be asking\n    them for auth info--it's possible it'll suceed w/o auth, but if we have\n    some credentials we'll use them anyway.\n\nRaises:\n  AuthPermanentFail: The user has requested non-interactive auth but\n    the token is invalid."
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/pkcs10dump.py",
+      "group": "otros",
+      "size": 1159,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/fast_importer_.py",
+      "group": "otros",
+      "size": 1996,
+      "doc": "This package imports images from a 'docker save' tarball.\n\nUnlike 'docker save' the format this uses is proprietary.",
+      "imports": [
+        "argparse",
+        "logging"
+      ],
+      "imports_from": [
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.tools",
+        "containerregistry.tools"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 51,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/standalone.py",
+      "group": "otros",
+      "size": 5550,
+      "doc": "",
+      "imports": [
+        "sys",
+        "token",
+        "tokenize",
+        "os",
+        "lark",
+        "pickle",
+        "zlib",
+        "base64"
+      ],
+      "imports_from": [
+        "abc",
+        "collections.abc",
+        "types",
+        "typing",
+        "os",
+        "collections",
+        "functools",
+        "argparse",
+        "lark.tools",
+        "lark.grammar",
+        "lark.lexer"
+      ],
+      "env_vars": [],
+      "urls": [
+        "https://github.com/erezsh/lark",
+        "https://mozilla.org/MPL/2.0/.",
+        "https://stackoverflow.com/questions/1769332/script-to-remove-python-comments-docstrings"
+      ],
+      "bq_fqn": [
+        "os.path.join",
+        "lark.tools.standalone",
+        "ns.out.close",
+        "ns.grammar_file.close"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "extract_sections",
+          "args": [
+            "lines"
+          ],
+          "returns": null,
+          "lineno": 73,
+          "doc": ""
+        },
+        {
+          "name": "strip_docstrings",
+          "args": [
+            "line_gen"
+          ],
+          "returns": null,
+          "lineno": 93,
+          "doc": "Strip comments and docstrings from a file.\nBased on code from: https://stackoverflow.com/questions/1769332/script-to-remove-python-comments-docstrings"
+        },
+        {
+          "name": "gen_standalone",
+          "args": [
+            "lark_inst",
+            "output",
+            "out",
+            "compress"
+          ],
+          "returns": null,
+          "lineno": 124,
+          "doc": ""
+        },
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 176,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/platform_args_.py",
+      "group": "otros",
+      "size": 2288,
+      "doc": "This package defines a few functions to add and parse platforms arguments.\n\nThese arguments are used to select the image to pull when given a Docker\nmanifest list.",
+      "imports": [
+        "argparse"
+      ],
+      "imports_from": [
+        "containerregistry.client.v2_2"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "containerregistry.client.v2_2"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "AddArguments",
+          "args": [
+            "parser"
+          ],
+          "returns": null,
+          "lineno": 25,
+          "doc": "Adds command-line arguments for platform fields.\n\nArgs:\n  parser: argparser.ArgumentParser object."
+        },
+        {
+          "name": "FromArgs",
+          "args": [
+            "args"
+          ],
+          "returns": null,
+          "lineno": 62,
+          "doc": "Populates a docker_image_list.Platform object from the provided args."
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/crmfdump.py",
+      "group": "otros",
+      "size": 795,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/ocspclient.py",
+      "group": "otros",
+      "size": 5387,
+      "doc": "",
+      "imports": [
+        "hashlib",
+        "sys",
+        "urllib2",
+        "urllib.request"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1.type",
+        "pyasn1_modules",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "encoder.encoder.BitStringEncoder",
+        "encoder.encoder.BitStringEncoder"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "mkOcspRequest",
+          "args": [
+            "issuerCert",
+            "userCert"
+          ],
+          "returns": null,
+          "lineno": 51,
+          "doc": ""
+        },
+        {
+          "name": "parseOcspResponse",
+          "args": [
+            "ocspResponse"
+          ],
+          "returns": null,
+          "lineno": 99,
+          "doc": ""
+        }
+      ],
+      "classes": [
+        {
+          "name": "ValueOnlyBitStringEncoder",
+          "lineno": 29,
+          "doc": "",
+          "methods": [
+            {
+              "name": "encodeTag",
+              "args": [
+                "self"
+              ],
+              "lineno": 31,
+              "doc": ""
+            },
+            {
+              "name": "encodeLength",
+              "args": [
+                "self"
+              ],
+              "lineno": 34,
+              "doc": ""
+            },
+            {
+              "name": "encodeValue",
+              "args": [],
+              "lineno": 37,
+              "doc": ""
+            },
+            {
+              "name": "__call__",
+              "args": [
+                "self",
+                "bitStringValue"
+              ],
+              "lineno": 43,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/ocsprspdump.py",
+      "group": "otros",
+      "size": 804,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/fast_puller_.py",
+      "group": "otros",
+      "size": 4959,
+      "doc": "This package pulls images from a Docker Registry.\n\nUnlike docker_puller the format this uses is proprietary.",
+      "imports": [
+        "argparse",
+        "logging",
+        "sys",
+        "httplib2"
+      ],
+      "imports_from": [
+        "containerregistry.client",
+        "containerregistry.client",
+        "containerregistry.client.v2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.tools",
+        "containerregistry.tools",
+        "containerregistry.tools",
+        "containerregistry.transport",
+        "containerregistry.transport"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "https://docs.docker.com/registry/spec/manifest-v2-2/",
+        "https://github.com/opencontainers/image-spec"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "containerregistry.client.v2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "docs.docker.com"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 67,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/appengine_rpc_test_util.py",
+      "group": "otros",
+      "size": 7894,
+      "doc": "Utilities for testing code that uses appengine_rpc's *RpcServer.",
+      "imports": [
+        "io",
+        "logging",
+        "urllib.error",
+        "urllib2"
+      ],
+      "imports_from": [
+        "__future__",
+        "googlecloudsdk.appengine.tools.appengine_rpc",
+        "googlecloudsdk.appengine.tools.appengine_rpc",
+        "googlecloudsdk.appengine._internal"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "https://www.google.com/accounts/ClientLogin"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine._internal",
+        "urllib.error.HTTPError",
+        "self.opener.set_strict",
+        "self.opener.set_save_request_data",
+        "self.fp.read",
+        "self.fp.readline",
+        "self.fp.close",
+        "www.google.com",
+        "self.requests.append",
+        "self.request_data.append",
+        "self.ordered_responses.pop",
+        "io.BytesIO.__init__",
+        "io.BytesIO.__init__"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [
+        {
+          "name": "TestRpcServerMixin",
+          "lineno": 41,
+          "doc": "Provides a mocked-out version of HttpRpcServer for testing purposes.",
+          "methods": [
+            {
+              "name": "set_strict",
+              "args": [
+                "self",
+                "strict"
+              ],
+              "lineno": 44,
+              "doc": "Enables strict mode."
+            },
+            {
+              "name": "set_save_request_data",
+              "args": [
+                "self",
+                "save_request_data"
+              ],
+              "lineno": 48,
+              "doc": "Enables saving request data for every request."
+            },
+            {
+              "name": "_GetOpener",
+              "args": [
+                "self"
+              ],
+              "lineno": 52,
+              "doc": "Returns a MockOpener.\n\nReturns:\n  A MockOpener object."
+            }
+          ]
+        },
+        {
+          "name": "TestRpcServer",
+          "lineno": 211,
+          "doc": "",
+          "methods": []
+        },
+        {
+          "name": "TestHttpRpcServer",
+          "lineno": 215,
+          "doc": "",
+          "methods": []
+        },
+        {
+          "name": "UrlLibRequestResponseStub",
+          "lineno": 219,
+          "doc": "",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "headers"
+              ],
+              "lineno": 220,
+              "doc": ""
+            },
+            {
+              "name": "add_header",
+              "args": [
+                "self",
+                "header",
+                "value"
+              ],
+              "lineno": 225,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "UrlLibRequestStub",
+          "lineno": 231,
+          "doc": "",
+          "methods": []
+        },
+        {
+          "name": "UrlLibResponseStub",
+          "lineno": 235,
+          "doc": "",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "body",
+                "headers",
+                "url",
+                "code",
+                "msg"
+              ],
+              "lineno": 236,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/cmcdump.py",
+      "group": "otros",
+      "size": 1768,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/logging_setup_.py",
+      "group": "otros",
+      "size": 1996,
+      "doc": "This package sets up the Python logging system.",
+      "imports": [
+        "logging",
+        "sys"
+      ],
+      "imports_from": [],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "logging.root.addHandler",
+        "logging.root.setLevel"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "DefineCommandLineArgs",
+          "args": [
+            "argparser"
+          ],
+          "returns": null,
+          "lineno": 28,
+          "doc": ""
+        },
+        {
+          "name": "Init",
+          "args": [
+            "args"
+          ],
+          "returns": null,
+          "lineno": 35,
+          "doc": ""
+        }
+      ],
+      "classes": [
+        {
+          "name": "Formatter",
+          "lineno": 44,
+          "doc": "",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self"
+              ],
+              "lineno": 46,
+              "doc": ""
+            },
+            {
+              "name": "format",
+              "args": [
+                "self",
+                "record"
+              ],
+              "lineno": 49,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/docker_pusher_.py",
+      "group": "otros",
+      "size": 4096,
+      "doc": "This package pushes images to a Docker Registry.",
+      "imports": [
+        "argparse",
+        "logging",
+        "sys",
+        "httplib2"
+      ],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "containerregistry.client",
+        "containerregistry.client",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.tools",
+        "containerregistry.tools",
+        "containerregistry.transport",
+        "containerregistry.transport"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "Tag",
+          "args": [
+            "name",
+            "files"
+          ],
+          "returns": null,
+          "lineno": 60,
+          "doc": "Perform substitutions in the provided tag name."
+        },
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 78,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/image_digester_.py",
+      "group": "otros",
+      "size": 3842,
+      "doc": "This package calculates the digest of an image.\n\nThe format this tool *expects* to deal with is proprietary.\nImage digests aren't stable upon gzip implementation/configuration.\nThis tool is expected to be only self-consistent.",
+      "imports": [
+        "argparse",
+        "logging",
+        "sys"
+      ],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.tools",
+        "six.moves"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 68,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/cvt_pyparsing_pep8_names.py",
+      "group": "otros",
+      "size": 5369,
+      "doc": "",
+      "imports": [
+        "pyparsing",
+        "argparse",
+        "sys",
+        "difflib"
+      ],
+      "imports_from": [
+        "functools",
+        "pathlib"
+      ],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [
+        "pp.util.make_compressed_re",
+        "sys.stdout.writelines"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "camel_to_snake",
+          "args": [
+            "s"
+          ],
+          "returns": "str",
+          "lineno": 6,
+          "doc": "Convert CamelCase to snake_case."
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/__init__.py",
+      "group": "otros",
+      "size": 2544,
+      "doc": "",
+      "imports": [
+        "sys",
+        "warnings"
+      ],
+      "imports_from": [
+        "argparse",
+        "textwrap",
+        "logging",
+        "typing",
+        "lark",
+        "interegular"
+      ],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [
+        "namespace.start.append"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "build_lalr",
+          "args": [
+            "namespace"
+          ],
+          "returns": null,
+          "lineno": 46,
+          "doc": ""
+        },
+        {
+          "name": "showwarning_as_comment",
+          "args": [
+            "message",
+            "category",
+            "filename",
+            "lineno",
+            "file",
+            "line"
+          ],
+          "returns": null,
+          "lineno": 56,
+          "doc": ""
+        },
+        {
+          "name": "make_warnings_comments",
+          "args": [],
+          "returns": null,
+          "lineno": 70,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/pkcs8dump.py",
+      "group": "otros",
+      "size": 1311,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/dispatch_xml_parser.py",
+      "group": "otros",
+      "size": 4113,
+      "doc": "Directly processes text of dispatch.xml.\n\nDispatchXmlParser is called with an XML string to produce a list of\nDispatchEntry objects containing the data from the XML.",
+      "imports": [],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "__future__",
+        "xml.etree",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine.tools.app_engine_config_exception"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine.tools",
+        "self.errors.append",
+        "self.errors.append",
+        "self.dispatch_entries.append"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "GetDispatchYaml",
+          "args": [
+            "application",
+            "dispatch_xml_str"
+          ],
+          "returns": null,
+          "lineno": 34,
+          "doc": ""
+        },
+        {
+          "name": "_MakeDispatchListIntoYaml",
+          "args": [
+            "application",
+            "dispatch_list"
+          ],
+          "returns": null,
+          "lineno": 39,
+          "doc": "Converts list of DispatchEntry objects into a YAML string."
+        }
+      ],
+      "classes": [
+        {
+          "name": "DispatchXmlParser",
+          "lineno": 50,
+          "doc": "Provides logic for walking down XML tree and pulling data.",
+          "methods": [
+            {
+              "name": "ProcessXml",
+              "args": [
+                "self",
+                "xml_str"
+              ],
+              "lineno": 53,
+              "doc": "Parses XML string and returns object representation of relevant info.\n\nArgs:\n  xml_str: The XML string.\nReturns:\n  A list of DispatchEntry objects defining how URLs are dispatched to\n  modules.\nRaises:\n  AppEngineConfigException: In case of malformed XML or illegal inputs."
+            },
+            {
+              "name": "ProcessDispatchNode",
+              "args": [
+                "self",
+                "node"
+              ],
+              "lineno": 82,
+              "doc": "Processes XML <dispatch> nodes into DispatchEntry objects.\n\nThe following information is parsed out:\n  url: The URL or URL pattern to route.\n  module: The module to route it to.\nIf there are no errors, the data is loaded into a DispatchEntry object\nand added to a list. Upon error, a description of the error is added to\na list and the method terminates.\n\nArgs:\n  node: <dispatch> XML node in dos.xml."
+            },
+            {
+              "name": "_ValidateEntry",
+              "args": [
+                "self",
+                "entry"
+              ],
+              "lineno": 110,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "DispatchEntry",
+          "lineno": 117,
+          "doc": "Instances contain information about individual dispatch entries.",
+          "methods": [
+            {
+              "name": "ToYaml",
+              "args": [
+                "self"
+              ],
+              "lineno": 120,
+              "doc": ""
+            },
+            {
+              "name": "_SanitizeForYaml",
+              "args": [
+                "self",
+                "dirty_str"
+              ],
+              "lineno": 126,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/x509dump-rfc5280.py",
+      "group": "otros",
+      "size": 1214,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/patched_.py",
+      "group": "otros",
+      "size": 1747,
+      "doc": "Context managers for patching libraries for use in PAR files.",
+      "imports": [
+        "os",
+        "pkgutil",
+        "shutil",
+        "tempfile",
+        "httplib2"
+      ],
+      "imports_from": [],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "os.path.isfile",
+        "os.path.join"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "_monkey_patch_httplib2",
+          "args": [
+            "extract_dir"
+          ],
+          "returns": null,
+          "lineno": 25,
+          "doc": "Patch things so that httplib2 works properly in a PAR.\n\nManually extract certificates to file to make OpenSSL happy and avoid error:\n   ssl.SSLError: [Errno 185090050] _ssl.c:344: error:0B084002:x509 ...\n\nArgs:\n  extract_dir: the directory into which we extract the necessary files."
+        }
+      ],
+      "classes": [
+        {
+          "name": "Httplib2",
+          "lineno": 44,
+          "doc": "",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self"
+              ],
+              "lineno": 46,
+              "doc": ""
+            },
+            {
+              "name": "__enter__",
+              "args": [
+                "self"
+              ],
+              "lineno": 50,
+              "doc": ""
+            },
+            {
+              "name": "__exit__",
+              "args": [
+                "self",
+                "unused_type",
+                "unused_value",
+                "unused_traceback"
+              ],
+              "lineno": 54,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/cmpdump.py",
+      "group": "otros",
+      "size": 926,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/context_util.py",
+      "group": "otros",
+      "size": 20305,
+      "doc": "The implementation of generating a source context file.",
+      "imports": [
+        "json",
+        "logging",
+        "os",
+        "re",
+        "subprocess"
+      ],
+      "imports_from": [
+        "googlecloudsdk.appengine._internal"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "https://<hostname>/id/<repo_id>",
+        "https://<hostname>/p/<project_id>",
+        "https://<hostname>/p/<project_id>/r/<repo_name>"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine._internal",
+        "os.path.join",
+        "os.path.exists",
+        "os.path.exists",
+        "os.path.join"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "_GetGitContextTypeFromDomain",
+          "args": [
+            "url"
+          ],
+          "returns": null,
+          "lineno": 82,
+          "doc": "Returns the context type for the input Git url."
+        },
+        {
+          "name": "_GetContextType",
+          "args": [
+            "context",
+            "labels"
+          ],
+          "returns": null,
+          "lineno": 104,
+          "doc": "Returns the _ContextType for the input extended source context.\n\nArgs:\n  context: A source context dict.\n  labels: A dict containing the labels associated with the context.\nReturns:\n  The context type."
+        },
+        {
+          "name": "_IsRemoteBetter",
+          "args": [
+            "new_name",
+            "old_name"
+          ],
+          "returns": null,
+          "lineno": 123,
+          "doc": "Indicates if a new remote is better than an old one, based on remote name.\n\nNames are ranked as follows: If either name is \"origin\", it is considered\nbest, otherwise the name that comes last alphabetically is considered best.\n\nThe alphabetical ordering is arbitrary, but it was chosen because it is\nstable. We prefer \"origin\" because it is the standard name for the origin\nof cloned repos.\n\nArgs:\n  new_name: The name to be evaluated.\n  old_name: The name to compare against.\nReturns:\n  True iff new_name should replace old_name."
+        },
+        {
+          "name": "IsCaptureContext",
+          "args": [
+            "context"
+          ],
+          "returns": null,
+          "lineno": 151,
+          "doc": ""
+        },
+        {
+          "name": "ExtendContextDict",
+          "args": [
+            "context",
+            "category",
+            "remote_name"
+          ],
+          "returns": null,
+          "lineno": 155,
+          "doc": "Converts a source context dict to an ExtendedSourceContext dict.\n\nArgs:\n  context: A SourceContext-compatible dict\n  category:  string indicating the category of context (either\n      CAPTURE_CATEGORY or REMOTE_REPO_CATEGORY)\n  remote_name: The name of the remote in git.\nReturns:\n  An ExtendedSourceContext-compatible dict."
+        },
+        {
+          "name": "HasPendingChanges",
+          "args": [
+            "source_directory"
+          ],
+          "returns": null,
+          "lineno": 172,
+          "doc": "Checks if the git repo in a directory has any pending changes.\n\nArgs:\n  source_directory: The path to directory containing the source code.\nReturns:\n  True if there are any uncommitted or untracked changes in the local repo\n  for the given directory."
+        },
+        {
+          "name": "CalculateExtendedSourceContexts",
+          "args": [
+            "source_directory"
+          ],
+          "returns": null,
+          "lineno": 186,
+          "doc": "Generate extended source contexts for a directory.\n\nScans the remotes and revision of the git repository at source_directory,\nreturning one or more ExtendedSourceContext-compatible dictionaries describing\nthe repositories.\n\nCurrently, this function will return only the Google-hosted repository\nassociated with the directory, if one exists.\n\nArgs:\n  source_directory: The path to directory containing the source code.\nReturns:\n  One or more ExtendedSourceContext-compatible dictionaries describing\n  the remote repository or repositories associated with the given directory.\nRaises:\n  GenerateSourceContextError: if source context could not be generated."
+        },
+        {
+          "name": "BestSourceContext",
+          "args": [
+            "source_contexts"
+          ],
+          "returns": null,
+          "lineno": 238,
+          "doc": "Returns the \"best\" source context from a list of contexts.\n\n\"Best\" is a heuristic that attempts to define the most useful context in\na Google Cloud Platform application. The most useful context is defined as:\n\n1. The capture context, if there is one. (I.e., a context with category\n   'capture')\n2. The Cloud Repo context, if there is one.\n3. A repo context from another known provider (i.e. github or bitbucket), if\n   there is no Cloud Repo context.\n4. The generic git repo context, if not of the above apply.\n\nIf there are two Cloud Repo contexts and one of them is a \"capture\" context,\nthat context is considered best.\n\nIf two Git contexts come from the same provider, they will be evaluated based\non remote name: \"origin\" is the best name, followed by the name that comes\nlast alphabetically.\n\nIf all of the above does not resolve a tie, the tied context that is\nearliest in the source_contexts list wins.\n\nArgs:\n  source_contexts: A list of extended source contexts.\nReturns:\n  A single source context, or None if source_contexts is empty.\nRaises:\n  KeyError if any extended source context is malformed."
+        },
+        {
+          "name": "GetSourceContextFilesCreator",
+          "args": [
+            "output_dir",
+            "source_contexts",
+            "source_dir"
+          ],
+          "returns": null,
+          "lineno": 290,
+          "doc": "Returns a function to create source context files in the given directory.\n\nThe returned creator function will produce one file: source-context.json\n\nArgs:\n  output_dir: (String) The directory to create the files (usually the yaml\n      directory).\n  source_contexts: ([ExtendedSourceContext-compatible json dict])\n      A list of json-serializable dicts containing source contexts. If None\n      or empty, output_dir will be inspected to determine if it has an\n      associated Git repo, and appropriate source contexts will be created\n      for that directory.\n  source_dir: (String) The location of the source files, for inferring source\n      contexts when source_contexts is empty or None. If not specified,\n      output_dir will be used instead.\nReturns:\n  callable() - A function that will create source-context.json file in the\n  given directory. The creator function will return a cleanup function which\n  can be used to delete any files the creator function creates.\n\n  If there are no source_contexts associated with the directory, the creator\n  function will not create any files (and the cleanup function it returns\n  will also do nothing)."
+        },
+        {
+          "name": "CreateContextFiles",
+          "args": [
+            "output_dir",
+            "source_contexts",
+            "overwrite",
+            "source_dir"
+          ],
+          "returns": null,
+          "lineno": 331,
+          "doc": "Creates source context file in the given directory if possible.\n\nCurrently, only source-context.json file will be produced.\n\nArgs:\n  output_dir: (String) The directory to create the files (usually the yaml\n      directory).\n  source_contexts:  ([ExtendedSourceContext-compatible json dict])\n      A list of json-serializable dicts containing source contexts. If None\n      or empty, source context will be inferred from source_dir.\n  overwrite: (boolean) If true, silently replace any existing file.\n  source_dir: (String) The location of the source files, for inferring\n      source contexts when source_contexts is empty or None. If not\n      specified, output_dir will be used instead.\nReturns:\n  ([String]) A list containing the names of the files created. If there are\n  no source contexts found, or if the contexts files could not be created, the\n  result will be an empty."
+        },
+        {
+          "name": "_CallGit",
+          "args": [
+            "cwd"
+          ],
+          "returns": null,
+          "lineno": 371,
+          "doc": "Calls git with the given args, in the given working directory.\n\nArgs:\n  cwd: The working directory for the command.\n  *args: Any arguments for the git command.\nReturns:\n  The raw output of the command, or None if the command failed."
+        },
+        {
+          "name": "_GetGitRemoteUrlConfigs",
+          "args": [
+            "source_directory"
+          ],
+          "returns": null,
+          "lineno": 390,
+          "doc": "Calls git to output every configured remote URL.\n\nArgs:\n  source_directory: The path to directory containing the source code.\nReturns:\n  The raw output of the command, or None if the command failed."
+        },
+        {
+          "name": "_GetGitRemoteUrls",
+          "args": [
+            "source_directory"
+          ],
+          "returns": null,
+          "lineno": 402,
+          "doc": "Finds the list of git remotes for the given source directory.\n\nArgs:\n  source_directory: The path to directory containing the source code.\nReturns:\n  A dictionary of remote name to remote URL, empty if no remotes are found."
+        },
+        {
+          "name": "_GetGitHeadRevision",
+          "args": [
+            "source_directory"
+          ],
+          "returns": null,
+          "lineno": 442,
+          "doc": "Finds the current HEAD revision for the given source directory.\n\nArgs:\n  source_directory: The path to directory containing the source code.\nReturns:\n  The HEAD revision of the current branch, or None if the command failed."
+        },
+        {
+          "name": "_ParseSourceContext",
+          "args": [
+            "remote_name",
+            "remote_url",
+            "source_revision"
+          ],
+          "returns": null,
+          "lineno": 454,
+          "doc": "Parses the URL into a source context blob, if the URL is a git or GCP repo.\n\nArgs:\n  remote_name: The name of the remote.\n  remote_url: The remote URL to parse.\n  source_revision: The current revision of the source directory.\nReturns:\n  An ExtendedSourceContext suitable for JSON."
+        },
+        {
+          "name": "_GetJsonFileCreator",
+          "args": [
+            "name",
+            "json_object"
+          ],
+          "returns": null,
+          "lineno": 515,
+          "doc": "Creates a creator function for an extended source context file.\n\nArgs:\n  name: (String) The name of the file to generate.\n  json_object: Any object compatible with json.dump.\nReturns:\n  (callable()) A creator function that will create the file and return a\n  cleanup function that will delete the file."
+        },
+        {
+          "name": "_GetContextFileCreator",
+          "args": [
+            "output_dir",
+            "contexts"
+          ],
+          "returns": null,
+          "lineno": 540,
+          "doc": "Creates a creator function for an old-style source context file.\n\nArgs:\n  output_dir: (String) The name of the directory in which to generate the\n      file. The file will be named source-context.json.\n  contexts: ([dict]) A list of ExtendedSourceContext-compatible dicts for json\n      serialization.\nReturns:\n  A creator function that will create the file."
+        },
+        {
+          "name": "_GetSourceContexts",
+          "args": [
+            "source_dir"
+          ],
+          "returns": null,
+          "lineno": 555,
+          "doc": "Gets the source contexts associated with a directory.\n\nThis function is mostly a wrapper around CalculateExtendedSourceContexts\nwhich logs a message if the context could not be determined.\nArgs:\n  source_dir: (String) The directory to inspect.\nReturns:\n  [ExtendedSourceContext-compatible json dict] A list of 0 or more source\n  contexts."
+        }
+      ],
+      "classes": [
+        {
+          "name": "_ContextType",
+          "lineno": 50,
+          "doc": "Ordered enumeration of context types.\n\nThe ordering is based on which context information will provide the best\nuser experience. Higher numbers are considered better than lower numbers.\nGoogle repositories have the highest ranking because they do not require\nadditional authorization to view.",
+          "methods": []
+        },
+        {
+          "name": "GenerateSourceContextError",
+          "lineno": 146,
+          "doc": "An error occurred while trying to create the source context.",
+          "methods": []
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/ocspreqdump.py",
+      "group": "otros",
+      "size": 807,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/pkcs1dump.py",
+      "group": "otros",
+      "size": 1394,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/crldump.py",
+      "group": "otros",
+      "size": 1080,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/docker_puller_.py",
+      "group": "otros",
+      "size": 5235,
+      "doc": "This package pulls images from a Docker Registry.",
+      "imports": [
+        "argparse",
+        "logging",
+        "sys",
+        "tarfile",
+        "httplib2"
+      ],
+      "imports_from": [
+        "containerregistry.client",
+        "containerregistry.client",
+        "containerregistry.client.v2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.tools",
+        "containerregistry.tools",
+        "containerregistry.tools",
+        "containerregistry.transport",
+        "containerregistry.transport"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "https://docs.docker.com/registry/spec/manifest-v2-2/",
+        "https://github.com/opencontainers/image-spec"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "containerregistry.client.v2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "docs.docker.com"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "_make_tag_if_digest",
+          "args": [
+            "name"
+          ],
+          "returns": null,
+          "lineno": 68,
+          "doc": ""
+        },
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 76,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/queue_xml_parser.py",
+      "group": "otros",
+      "size": 8712,
+      "doc": "Performs translation of queue.xml to queue.yaml.",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "__future__",
+        "__future__",
+        "xml.etree",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine.tools.app_engine_config_exception"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine.tools",
+        "self.queue_xml.queues",
+        "self.queue_xml.total_storage_limit",
+        "self.errors.append",
+        "self.errors.append",
+        "self.queue_xml.queues",
+        "self.errors.append",
+        "self.errors.append",
+        "queue.acl.user_emails",
+        "queue.acl.writer_emails",
+        "self.errors.append",
+        "self.retry_parameters.GetYamlStatementsList",
+        "self.acl.GetYamlStatementsList",
+        "sys.stdin.read"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "GetQueueYaml",
+          "args": [
+            "unused_application",
+            "queue_xml_str"
+          ],
+          "returns": null,
+          "lineno": 52,
+          "doc": ""
+        },
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 270,
+          "doc": ""
+        }
+      ],
+      "classes": [
+        {
+          "name": "QueueXmlParser",
+          "lineno": 57,
+          "doc": "Provides logic for walking down XML tree and pulling data.",
+          "methods": [
+            {
+              "name": "ProcessXml",
+              "args": [
+                "self",
+                "xml_str"
+              ],
+              "lineno": 60,
+              "doc": "Parses XML string and returns object representation of relevant info.\n\nArgs:\n  xml_str: The XML string.\nReturns:\n  A QueueXml object containing information about task queue\n  specifications from the XML.\nRaises:\n  AppEngineConfigException: In case of malformed XML or illegal inputs."
+            },
+            {
+              "name": "ProcessQueueNode",
+              "args": [
+                "self",
+                "node"
+              ],
+              "lineno": 94,
+              "doc": "Processes XML <queue> nodes into Queue objects.\n\nThe following information is parsed out:\n  name\n  mode: can be either push or pull\n  retry-parameters:\n    task-retry-limit\n---- push queues only ----\n    task-age-limit\n    min-backoff-seconds\n    max-back-off-seconds\n    max-doubling\n  bucket-size\n  max-concurrent-requests\n  rate: how often tasks are processed on this queue.\n  target: version of application on which tasks on this queue will be\n    invoked.\n---- pull queues only ----\n  acl: access control list - lists user and writer email addresses.\n\nArgs:\n  node: Current <queue> XML node being processed."
+            },
+            {
+              "name": "_ProcessPushQueueNode",
+              "args": [
+                "self",
+                "node",
+                "queue"
+              ],
+              "lineno": 141,
+              "doc": ""
+            },
+            {
+              "name": "_ProcessPullQueueNode",
+              "args": [
+                "self",
+                "node",
+                "queue"
+              ],
+              "lineno": 151,
+              "doc": "Populates PullQueue-specific fields from parsed XML."
+            },
+            {
+              "name": "_ProcessRetryParametersNode",
+              "args": [
+                "self",
+                "node",
+                "queue"
+              ],
+              "lineno": 172,
+              "doc": "Pulls information out of <retry-parameters> node."
+            }
+          ]
+        },
+        {
+          "name": "QueueXml",
+          "lineno": 196,
+          "doc": "",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self"
+              ],
+              "lineno": 198,
+              "doc": ""
+            },
+            {
+              "name": "ToYaml",
+              "args": [
+                "self"
+              ],
+              "lineno": 202,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "Queue",
+          "lineno": 213,
+          "doc": "",
+          "methods": [
+            {
+              "name": "GetYamlStatementsList",
+              "args": [
+                "self"
+              ],
+              "lineno": 215,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "PushQueue",
+          "lineno": 225,
+          "doc": "",
+          "methods": [
+            {
+              "name": "GetAdditionalYamlStatementsList",
+              "args": [
+                "self"
+              ],
+              "lineno": 227,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "PullQueue",
+          "lineno": 238,
+          "doc": "",
+          "methods": [
+            {
+              "name": "GetAdditionalYamlStatementsList",
+              "args": [
+                "self"
+              ],
+              "lineno": 240,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "Acl",
+          "lineno": 247,
+          "doc": "",
+          "methods": [
+            {
+              "name": "GetYamlStatementsList",
+              "args": [
+                "self"
+              ],
+              "lineno": 249,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "RetryParameters",
+          "lineno": 258,
+          "doc": "",
+          "methods": [
+            {
+              "name": "GetYamlStatementsList",
+              "args": [
+                "self"
+              ],
+              "lineno": 260,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/app_engine_config_exception.py",
+      "group": "otros",
+      "size": 924,
+      "doc": "Contains exception class for reporting XML parsing errors.",
+      "imports": [],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "__future__"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [
+        {
+          "name": "AppEngineConfigException",
+          "lineno": 22,
+          "doc": "generic exception class for App Engine application configuration.",
+          "methods": []
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/fast_flatten_.py",
+      "group": "otros",
+      "size": 3270,
+      "doc": "This package flattens image metadata into a single tarball.",
+      "imports": [
+        "argparse",
+        "logging",
+        "tarfile"
+      ],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "containerregistry.client.v2_2",
+        "containerregistry.tools",
+        "six.moves"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "containerregistry.client.v2_2"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 69,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/fast_pusher_.py",
+      "group": "otros",
+      "size": 6564,
+      "doc": "This package pushes images to a Docker Registry.\n\nThe format this tool *expects* to deal with is (unlike docker_pusher)\nproprietary, however, unlike {fast,docker}_puller the signature of this tool is\ncompatible with docker_pusher.",
+      "imports": [
+        "argparse",
+        "logging",
+        "sys",
+        "httplib2"
+      ],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "containerregistry.client",
+        "containerregistry.client",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.tools",
+        "containerregistry.tools",
+        "containerregistry.transport",
+        "containerregistry.transport",
+        "six.moves"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "Tag",
+          "args": [
+            "name",
+            "files"
+          ],
+          "returns": null,
+          "lineno": 91,
+          "doc": "Perform substitutions in the provided tag name."
+        },
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 113,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/pkcs7dump.py",
+      "group": "otros",
+      "size": 1506,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/xml_parser_utils.py",
+      "group": "otros",
+      "size": 1850,
+      "doc": "Contains some functions that come in handy with XML parsing.",
+      "imports": [],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "__future__"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "node.tag.rsplit",
+        "node.attrib.get",
+        "node.text.strip"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "GetTag",
+          "args": [
+            "node"
+          ],
+          "returns": null,
+          "lineno": 22,
+          "doc": "Strips namespace prefix."
+        },
+        {
+          "name": "GetChild",
+          "args": [
+            "node",
+            "tag"
+          ],
+          "returns": null,
+          "lineno": 27,
+          "doc": "Returns first child of node with tag."
+        },
+        {
+          "name": "BooleanValue",
+          "args": [
+            "node_text"
+          ],
+          "returns": null,
+          "lineno": 34,
+          "doc": ""
+        },
+        {
+          "name": "GetAttribute",
+          "args": [
+            "node",
+            "attr"
+          ],
+          "returns": null,
+          "lineno": 38,
+          "doc": "Wrapper function to retrieve attributes from XML nodes."
+        },
+        {
+          "name": "GetChildNodeText",
+          "args": [
+            "node",
+            "child_tag",
+            "default"
+          ],
+          "returns": null,
+          "lineno": 43,
+          "doc": "Finds child xml node with desired tag and returns its text."
+        },
+        {
+          "name": "GetNodeText",
+          "args": [
+            "node"
+          ],
+          "returns": null,
+          "lineno": 51,
+          "doc": "Returns the node text after stripping whitespace."
+        },
+        {
+          "name": "GetNodes",
+          "args": [
+            "node",
+            "match_tag"
+          ],
+          "returns": null,
+          "lineno": 57,
+          "doc": "Gets all children of a node with the desired tag."
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/docker_appender_.py",
+      "group": "otros",
+      "size": 2953,
+      "doc": "This package appends a tarball to an image in a Docker Registry.",
+      "imports": [
+        "argparse",
+        "logging",
+        "httplib2"
+      ],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "containerregistry.client",
+        "containerregistry.client",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.tools",
+        "containerregistry.tools",
+        "containerregistry.transport"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2",
+        "containerregistry.client.v2_2"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 52,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/dos_xml_parser.py",
+      "group": "otros",
+      "size": 4563,
+      "doc": "Directly processes text of dos.xml.\n\nDosXmlParser is called with an XML string to produce a list of BlackListEntry\nobjects containing the data from the XML.\n\nDosXmlParser: converts XML to list of BlackListEntrys.\nBlacklistEntry: describes a blacklisted IP.",
+      "imports": [
+        "re",
+        "ipaddr"
+      ],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "__future__",
+        "xml.etree",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine.tools.app_engine_config_exception"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine.tools",
+        "self.errors.append",
+        "self.errors.append",
+        "self.blacklist_entries.append",
+        "entry.subnet.split"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "GetDosYaml",
+          "args": [
+            "unused_application",
+            "dos_xml_str"
+          ],
+          "returns": null,
+          "lineno": 41,
+          "doc": ""
+        },
+        {
+          "name": "_MakeDosListIntoYaml",
+          "args": [
+            "dos_list"
+          ],
+          "returns": null,
+          "lineno": 45,
+          "doc": "Converts yaml statement list of blacklisted IP's into a string."
+        }
+      ],
+      "classes": [
+        {
+          "name": "DosXmlParser",
+          "lineno": 53,
+          "doc": "Provides logic for walking down XML tree and pulling data.",
+          "methods": [
+            {
+              "name": "ProcessXml",
+              "args": [
+                "self",
+                "xml_str"
+              ],
+              "lineno": 56,
+              "doc": "Parses XML string and returns object representation of relevant info.\n\nArgs:\n  xml_str: The XML string.\nReturns:\n  A list of BlacklistEntry objects containing information about blacklisted\n  IP's specified in the XML.\nRaises:\n  AppEngineConfigException: In case of malformed XML or illegal inputs."
+            },
+            {
+              "name": "ProcessBlacklistNode",
+              "args": [
+                "self",
+                "node"
+              ],
+              "lineno": 85,
+              "doc": "Processes XML <blacklist> nodes into BlacklistEntry objects.\n\nThe following information is parsed out:\n  subnet: The IP, in CIDR notation.\n  description: (optional)\nIf there are no errors, the data is loaded into a BlackListEntry object\nand added to a list. Upon error, a description of the error is added to\na list and the method terminates.\n\nArgs:\n  node: <blacklist> XML node in dos.xml."
+            },
+            {
+              "name": "_ValidateEntry",
+              "args": [
+                "self",
+                "entry"
+              ],
+              "lineno": 113,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "BlacklistEntry",
+          "lineno": 125,
+          "doc": "Instances contain information about individual blacklist entries.",
+          "methods": [
+            {
+              "name": "ToYaml",
+              "args": [
+                "self"
+              ],
+              "lineno": 128,
+              "doc": ""
+            },
+            {
+              "name": "_SanitizeForYaml",
+              "args": [
+                "self",
+                "dirty_str"
+              ],
+              "lineno": 135,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/snmpget.py",
+      "group": "otros",
+      "size": 1444,
+      "doc": "",
+      "imports": [
+        "socket",
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.ber",
+        "pyasn1.codec.ber",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.ber",
+        "pyasn1.codec.ber"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/appengine_rpc.py",
+      "group": "otros",
+      "size": 24665,
+      "doc": "Tool for performing authenticated RPCs against App Engine.",
+      "imports": [
+        "gzip",
+        "hashlib",
+        "io",
+        "logging",
+        "os",
+        "re",
+        "socket",
+        "sys",
+        "time",
+        "urllib",
+        "http.cookiejar",
+        "urllib.error",
+        "urllib.request",
+        "cookielib",
+        "fancy_urllib",
+        "urllib2",
+        "ssl"
+      ],
+      "imports_from": [
+        "googlecloudsdk.core.util",
+        "googlecloudsdk.appengine._internal"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://%s/_ah/login",
+        "http://code.google.com/apis/accounts/AuthForInstalledApps.html",
+        "http://localhost/",
+        "http://pypi.python.org/pypi/ssl",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "https://%s/accounts/ClientLogin",
+        "https://developers.google.com/appengine/kb/general#rpcssl",
+        "https://www.google.com/accounts/DisplayUnlockCaptcha\\n",
+        "https://www.google.com/accounts/ServiceLogin",
+        "https://www\\.google\\.com/a/[a-z0-9\\.\\-]+/ServiceLogin"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.core.util",
+        "googlecloudsdk.appengine._internal",
+        "urllib.request.BaseHandler",
+        "urllib.error.HTTPError",
+        "urllib.request.HTTPHandler",
+        "urllib.request.HTTPDefaultErrorHandler",
+        "urllib.request.HTTPCookieProcessor",
+        "urllib.request.HTTPSHandler",
+        "urllib.request.HTTPErrorProcessor",
+        "http.cookiejar.MozillaCookieJar",
+        "urllib.request.ProxyHandler",
+        "http.cookiejar.LoadError",
+        "urllib.request.OpenerDirector",
+        "urllib.request.Request",
+        "urllib.request.UnknownHandler",
+        "urllib.response.addinfourl",
+        "urllib.parse.urlencode",
+        "googlecloudsdk.appengine.tools",
+        "self.extra_headers.update",
+        "self.host.startswith",
+        "self.extra_headers.items",
+        "self.host.split",
+        "self.host_override.split",
+        "www.google.com",
+        "self.opener.open",
+        "os.environ.get",
+        "self.opener.open",
+        "code.google.com",
+        "www.google.com",
+        "self.scheme.upper",
+        "self.opener.open",
+        "www.google.com",
+        "os.path.normpath",
+        "os.path.join",
+        "os.path.dirname",
+        "os.path.exists",
+        "pypi.python.org",
+        "developers.google.com",
+        "self.cookie_jar.filename",
+        "self.cookie_jar.filename",
+        "self.cookie_jar.save",
+        "self.cookie_jar.filename",
+        "os.path.expanduser",
+        "os.path.exists",
+        "self.cookie_jar.filename",
+        "self.cookie_jar.load",
+        "self.cookie_jar.filename",
+        "e.__class__.__name__",
+        "self.cookie_jar.filename",
+        "self.cookie_jar.filename",
+        "e.__class__.__name__",
+        "self.cookie_jar.filename"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "can_validate_certs",
+          "args": [],
+          "returns": null,
+          "lineno": 85,
+          "doc": "Return True if we have the SSL package and can validate certificates."
+        },
+        {
+          "name": "GetPlatformToken",
+          "args": [
+            "os_module",
+            "sys_module",
+            "platform"
+          ],
+          "returns": null,
+          "lineno": 93,
+          "doc": "Returns a 'User-agent' token for the host system platform.\n\nArgs:\n  os_module, sys_module, platform: Used for testing.\n\nReturns:\n  String containing the platform token for the host system."
+        },
+        {
+          "name": "HttpRequestToString",
+          "args": [
+            "req",
+            "include_data"
+          ],
+          "returns": null,
+          "lineno": 112,
+          "doc": "Converts a urllib2.Request to a string.\n\nArgs:\n  req: urllib2.Request\nReturns:\n  Multi-line string representing the request."
+        }
+      ],
+      "classes": [
+        {
+          "name": "ClientLoginError",
+          "lineno": 157,
+          "doc": "Raised to indicate there was an error authenticating with ClientLogin.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "url",
+                "code",
+                "msg",
+                "headers",
+                "args"
+              ],
+              "lineno": 160,
+              "doc": ""
+            },
+            {
+              "name": "read",
+              "args": [
+                "self"
+              ],
+              "lineno": 166,
+              "doc": ""
+            },
+            {
+              "name": "reason",
+              "args": [
+                "self"
+              ],
+              "lineno": 172,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "AbstractRpcServer",
+          "lineno": 176,
+          "doc": "Provides a common interface for a simple RPC server.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "host",
+                "auth_function",
+                "user_agent",
+                "source",
+                "host_override",
+                "extra_headers",
+                "save_cookies",
+                "auth_tries",
+                "account_type",
+                "debug_data",
+                "secure",
+                "ignore_certs",
+                "rpc_tries",
+                "options"
+              ],
+              "lineno": 182,
+              "doc": "Creates a new HttpRpcServer.\n\nArgs:\n  host: The host to send requests to.\n  auth_function: A function that takes no arguments and returns an\n    (email, password) tuple when called. Will be called if authentication\n    is required.\n  user_agent: The user-agent string to send to the server. Specify None to\n    omit the user-agent header.\n  source: The source to specify in authentication requests.\n  host_override: The host header to send to the server (defaults to host).\n  extra_headers: A dict of extra headers to append to every request. Values\n    supplied here will override other default headers that are supplied.\n  save_cookies: If True, save the authentication cookies to local disk.\n    If False, use an in-memory cookiejar instead.  Subclasses must\n    implement this functionality.  Defaults to False.\n  auth_tries: The number of times to attempt auth_function before failing.\n  account_type: One of GOOGLE, HOSTED_OR_GOOGLE, or None for automatic.\n  debug_data: Whether debugging output should include data contents.\n  secure: If the requests sent using Send should be sent over HTTPS.\n  ignore_certs: If the certificate mismatches should be ignored.\n  rpc_tries: The number of rpc retries upon http server error (i.e.\n    Response code >= 500 and < 600) before failing.\n  options: the command line options (ignored in this implementation)."
+            },
+            {
+              "name": "_GetOpener",
+              "args": [
+                "self"
+              ],
+              "lineno": 248,
+              "doc": "Returns an OpenerDirector for making HTTP requests.\n\nReturns:\n  A urllib2.OpenerDirector object."
+            },
+            {
+              "name": "_CreateRequest",
+              "args": [
+                "self",
+                "url",
+                "data"
+              ],
+              "lineno": 256,
+              "doc": "Creates a new urllib request."
+            },
+            {
+              "name": "_GetAuthToken",
+              "args": [
+                "self",
+                "email",
+                "password"
+              ],
+              "lineno": 265,
+              "doc": "Uses ClientLogin to authenticate the user, returning an auth token.\n\nArgs:\n  email:    The user's email address\n  password: The user's password\n\nRaises:\n  ClientLoginError: If there was an error authenticating with ClientLogin.\n  HTTPError: If there was some other form of HTTP error.\n\nReturns:\n  The authentication token returned by ClientLogin."
+            },
+            {
+              "name": "_GetAuthCookie",
+              "args": [
+                "self",
+                "auth_token"
+              ],
+              "lineno": 319,
+              "doc": "Fetches authentication cookies for an authentication token.\n\nArgs:\n  auth_token: The authentication token returned by ClientLogin.\n\nRaises:\n  HTTPError: If there was an error fetching the authentication cookies."
+            },
+            {
+              "name": "_Authenticate",
+              "args": [
+                "self"
+              ],
+              "lineno": 345,
+              "doc": "Authenticates the user.\n\nThe authentication process works as follows:\n 1) We get a username and password from the user\n 2) We use ClientLogin to obtain an AUTH token for the user\n    (see http://code.google.com/apis/accounts/AuthForInstalledApps.html).\n 3) We pass the auth token to /_ah/login on the server to obtain an\n    authentication cookie. If login was successful, it tries to redirect\n    us to the URL we provided.\n\nIf we attempt to access the upload API without first obtaining an\nauthentication cookie, it returns a 401 response and directs us to\nauthenticate ourselves with ClientLogin."
+            },
+            {
+              "name": "_CreateDevAppServerCookieData",
+              "args": [
+                "email",
+                "admin"
+              ],
+              "lineno": 400,
+              "doc": "Creates cookie payload data.\n\nArgs:\n  email: The user's email address.\n  admin: True if the user is an admin; False otherwise.\n\nReturns:\n  String containing the cookie payload."
+            },
+            {
+              "name": "_DevAppServerAuthenticate",
+              "args": [
+                "self"
+              ],
+              "lineno": 418,
+              "doc": "Authenticates the user on the dev_appserver."
+            },
+            {
+              "name": "Send",
+              "args": [
+                "self",
+                "request_path",
+                "payload",
+                "content_type",
+                "timeout"
+              ],
+              "lineno": 424,
+              "doc": "Sends an RPC and returns the response.\n\nArgs:\n  request_path: The path to send the request to, eg /api/appversion/create.\n  payload: The body of the request, or None to send an empty request.\n  content_type: The Content-Type header to use.\n  timeout: timeout in seconds; default None i.e. no timeout.\n    (Note: for large requests on OS X, the timeout doesn't work right.)\n  kwargs: Any keyword arguments are converted into query string parameters.\n\nReturns:\n  The response body, as a string."
+            }
+          ]
+        },
+        {
+          "name": "ContentEncodingHandler",
+          "lineno": 509,
+          "doc": "Request and handle HTTP Content-Encoding.",
+          "methods": [
+            {
+              "name": "http_request",
+              "args": [
+                "self",
+                "request"
+              ],
+              "lineno": 512,
+              "doc": ""
+            },
+            {
+              "name": "http_response",
+              "args": [
+                "self",
+                "req",
+                "resp"
+              ],
+              "lineno": 533,
+              "doc": "Handle encodings in the order that they are encountered."
+            }
+          ]
+        },
+        {
+          "name": "HttpRpcServer",
+          "lineno": 583,
+          "doc": "Provides a simplified RPC-style interface for HTTP requests.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self"
+              ],
+              "lineno": 588,
+              "doc": ""
+            },
+            {
+              "name": "_CreateRequest",
+              "args": [
+                "self",
+                "url",
+                "data"
+              ],
+              "lineno": 596,
+              "doc": "Creates a new urllib request."
+            },
+            {
+              "name": "_CheckCookie",
+              "args": [
+                "self"
+              ],
+              "lineno": 603,
+              "doc": "Warn if cookie is not valid for at least one minute."
+            },
+            {
+              "name": "_Authenticate",
+              "args": [
+                "self"
+              ],
+              "lineno": 614,
+              "doc": "Save the cookie jar after authentication."
+            },
+            {
+              "name": "_GetOpener",
+              "args": [
+                "self"
+              ],
+              "lineno": 631,
+              "doc": "Returns an OpenerDirector that supports cookies and ignores redirects.\n\nReturns:\n  A urllib2.OpenerDirector object."
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/value_mixin.py",
+      "group": "otros",
+      "size": 1298,
+      "doc": "ValueMixin provides comparison and string methods based on fields.",
+      "imports": [],
+      "imports_from": [
+        "__future__"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "self.__dict__.items",
+        "self.__class__.__name__"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [
+        {
+          "name": "ValueMixin",
+          "lineno": 19,
+          "doc": "Provides simplistic but often sufficient comparison and string methods.",
+          "methods": [
+            {
+              "name": "__eq__",
+              "args": [
+                "self",
+                "other"
+              ],
+              "lineno": 22,
+              "doc": ""
+            },
+            {
+              "name": "__ne__",
+              "args": [
+                "self",
+                "other"
+              ],
+              "lineno": 25,
+              "doc": ""
+            },
+            {
+              "name": "__hash__",
+              "args": [
+                "self"
+              ],
+              "lineno": 28,
+              "doc": ""
+            },
+            {
+              "name": "__repr__",
+              "args": [
+                "self"
+              ],
+              "lineno": 31,
+              "doc": "Returns a string representation like `MyClass(foo=23, bar=skidoo)`."
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/x509dump.py",
+      "group": "otros",
+      "size": 1134,
+      "doc": "",
+      "imports": [
+        "sys"
+      ],
+      "imports_from": [
+        "pyasn1.codec.der",
+        "pyasn1.codec.der",
+        "pyasn1_modules",
+        "pyasn1_modules"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://pyasn1.sf.net/license.html"
+      ],
+      "bq_fqn": [
+        "pyasn1.sf.net",
+        "pyasn1.codec.der",
+        "pyasn1.codec.der"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/nearley.py",
+      "group": "otros",
+      "size": 6265,
+      "doc": "Converts Nearley grammars to Lark",
+      "imports": [
+        "os.path",
+        "sys",
+        "codecs",
+        "argparse",
+        "js2py"
+      ],
+      "imports_from": [
+        "lark"
+      ],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [
+        "os.path.join",
+        "os.path.abspath",
+        "os.path.dirname",
+        "n2l.extra_rules.items",
+        "n2l.alias_js_code.items",
+        "os.path.join",
+        "os.path.abspath",
+        "os.path.dirname"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "_get_rulename",
+          "args": [
+            "name"
+          ],
+          "returns": null,
+          "lineno": 49,
+          "doc": ""
+        },
+        {
+          "name": "_nearley_to_lark",
+          "args": [
+            "g",
+            "builtin_path",
+            "n2l",
+            "js_code",
+            "folder_path",
+            "includes"
+          ],
+          "returns": null,
+          "lineno": 113,
+          "doc": ""
+        },
+        {
+          "name": "create_code_for_nearley_grammar",
+          "args": [
+            "g",
+            "start",
+            "builtin_path",
+            "folder_path",
+            "es6"
+          ],
+          "returns": null,
+          "lineno": 144,
+          "doc": ""
+        },
+        {
+          "name": "main",
+          "args": [
+            "fn",
+            "start",
+            "nearley_lib",
+            "es6"
+          ],
+          "returns": null,
+          "lineno": 183,
+          "doc": ""
+        },
+        {
+          "name": "get_arg_parser",
+          "args": [],
+          "returns": null,
+          "lineno": 188,
+          "doc": ""
+        }
+      ],
+      "classes": [
+        {
+          "name": "NearleyToLark",
+          "lineno": 54,
+          "doc": "",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self"
+              ],
+              "lineno": 55,
+              "doc": ""
+            },
+            {
+              "name": "_new_function",
+              "args": [
+                "self",
+                "code"
+              ],
+              "lineno": 61,
+              "doc": ""
+            },
+            {
+              "name": "_extra_rule",
+              "args": [
+                "self",
+                "rule"
+              ],
+              "lineno": 68,
+              "doc": ""
+            },
+            {
+              "name": "rule",
+              "args": [
+                "self",
+                "name"
+              ],
+              "lineno": 78,
+              "doc": ""
+            },
+            {
+              "name": "ruledef",
+              "args": [
+                "self",
+                "name",
+                "exps"
+              ],
+              "lineno": 81,
+              "doc": ""
+            },
+            {
+              "name": "expr",
+              "args": [
+                "self",
+                "item",
+                "op"
+              ],
+              "lineno": 84,
+              "doc": ""
+            },
+            {
+              "name": "regexp",
+              "args": [
+                "self",
+                "r"
+              ],
+              "lineno": 88,
+              "doc": ""
+            },
+            {
+              "name": "null",
+              "args": [
+                "self"
+              ],
+              "lineno": 91,
+              "doc": ""
+            },
+            {
+              "name": "string",
+              "args": [
+                "self",
+                "s"
+              ],
+              "lineno": 94,
+              "doc": ""
+            },
+            {
+              "name": "expansion",
+              "args": [
+                "self"
+              ],
+              "lineno": 97,
+              "doc": ""
+            },
+            {
+              "name": "expansions",
+              "args": [
+                "self"
+              ],
+              "lineno": 107,
+              "doc": ""
+            },
+            {
+              "name": "start",
+              "args": [
+                "self"
+              ],
+              "lineno": 110,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/tools/cron_xml_parser.py",
+      "group": "otros",
+      "size": 7187,
+      "doc": "Directly processes text of cron.xml.\n\nCronXmlParser is called with an XML string to produce a CronXml object\ncontaining the data from the XML.\n\nCronXmlParser: converts XML to CronXml objct\nCron: describes a single cron specified in cron.xml",
+      "imports": [],
+      "imports_from": [
+        "__future__",
+        "__future__",
+        "__future__",
+        "xml.etree",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine.tools.app_engine_config_exception",
+        "googlecloudsdk.appengine._internal",
+        "googlecloudsdk.appengine.googlecron",
+        "googlecloudsdk.appengine.googlecron"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine.tools",
+        "googlecloudsdk.appengine._internal",
+        "googlecloudsdk.appengine.googlecron",
+        "googlecloudsdk.appengine.googlecron",
+        "self.errors.append",
+        "self.errors.append",
+        "self.crons.append"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "GetCronYaml",
+          "args": [
+            "unused_application",
+            "cron_xml_str"
+          ],
+          "returns": null,
+          "lineno": 53,
+          "doc": ""
+        },
+        {
+          "name": "_MakeCronListIntoYaml",
+          "args": [
+            "cron_list"
+          ],
+          "returns": null,
+          "lineno": 57,
+          "doc": "Converts list of yaml statements describing cron jobs into a string."
+        },
+        {
+          "name": "_ProcessRetryParametersNode",
+          "args": [
+            "node",
+            "cron"
+          ],
+          "returns": null,
+          "lineno": 65,
+          "doc": "Converts <retry-parameters> in node to cron.retry_parameters."
+        }
+      ],
+      "classes": [
+        {
+          "name": "CronXmlParser",
+          "lineno": 83,
+          "doc": "Provides logic for walking down XML tree and pulling data.",
+          "methods": [
+            {
+              "name": "ProcessXml",
+              "args": [
+                "self",
+                "xml_str"
+              ],
+              "lineno": 86,
+              "doc": "Parses XML string and returns object representation of relevant info.\n\nArgs:\n  xml_str: The XML string.\nReturns:\n  A list of Cron objects containing information about cron jobs from the\n  XML.\nRaises:\n  AppEngineConfigException: In case of malformed XML or illegal inputs."
+            },
+            {
+              "name": "ProcessCronNode",
+              "args": [
+                "self",
+                "node"
+              ],
+              "lineno": 115,
+              "doc": "Processes XML <cron> nodes into Cron objects.\n\nThe following information is parsed out:\n  description: Describing the purpose of the cron job.\n  url: The location of the script.\n  schedule: Written in groc; the schedule according to which the job is\n    executed.\n  timezone: The timezone that the schedule runs in.\n  target: Which version of the app this applies to.\n\nArgs:\n  node: <cron> XML node in cron.xml."
+            },
+            {
+              "name": "_ValidateCronEntry",
+              "args": [
+                "self",
+                "cron"
+              ],
+              "lineno": 148,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "_RetryParameters",
+          "lineno": 166,
+          "doc": "Object that contains retry xml tags converted to object attributes.",
+          "methods": [
+            {
+              "name": "GetYamlStatementsList",
+              "args": [
+                "self"
+              ],
+              "lineno": 169,
+              "doc": "Converts retry parameter fields to a YAML statement list."
+            }
+          ]
+        },
+        {
+          "name": "Cron",
+          "lineno": 184,
+          "doc": "Instances contain information about individual cron entries.",
+          "methods": [
+            {
+              "name": "ToYaml",
+              "args": [
+                "self"
+              ],
+              "lineno": 188,
+              "doc": "Returns data from Cron object as a list of Yaml statements."
+            },
+            {
+              "name": "_SanitizeForYaml",
+              "args": [
+                "self",
+                "field"
+              ],
+              "lineno": 202,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/recolector/diagnostico_selector.py",
+      "group": "ingestion",
+      "size": 4320,
+      "doc": "",
+      "imports": [
+        "time",
+        "os",
+        "dotenv",
+        "json",
+        "datetime",
+        "re",
+        "request"
+      ],
+      "imports_from": [
+        "selenium",
+        "selenium.webdriver.chrome.service",
+        "selenium.webdriver.common.by",
+        "selenium.webdriver.support.ui",
+        "selenium.webdriver.support"
+      ],
+      "env_vars": [
+        "INSTAGRAM_PASSWORD",
+        "INSTAGRAM_USERNAME"
+      ],
+      "urls": [
+        "https://www.instagram.com/accounts/login/",
+        "https://www.instagram.com/p/DHcQE-gPk_F/"
+      ],
+      "bq_fqn": [
+        "selenium.webdriver.chrome",
+        "selenium.webdriver.common",
+        "selenium.webdriver.support",
+        "selenium.webdriver.support",
+        "os.path.dirname",
+        "os.path.abspath",
+        "os.path.join",
+        "www.instagram.com",
+        "www.instagram.com",
+        "os.path.join",
+        "os.path.join"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "parse_int_commas",
+          "args": [
+            "texto"
+          ],
+          "returns": null,
+          "lineno": 24,
+          "doc": "Convierte strings con comas a enteros. Ej: '1,234' -> 1234"
+        },
+        {
+          "name": "clean_text",
+          "args": [
+            "txt"
+          ],
+          "returns": null,
+          "lineno": 31,
+          "doc": "Limpia espacios y saltos de línea de un texto"
+        },
+        {
+          "name": "standardize_instagram_post",
+          "args": [
+            "raw"
+          ],
+          "returns": null,
+          "lineno": 35,
+          "doc": "Devuelve un diccionario normalizado de un post de Instagram"
+        },
+        {
+          "name": "login_instagram",
+          "args": [
+            "driver"
+          ],
+          "returns": null,
+          "lineno": 48,
+          "doc": "Inicia sesión en Instagram."
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/recolector/tiktok_scraper.py",
+      "group": "ingestion",
+      "size": 1871,
+      "doc": "",
+      "imports": [
+        "time",
+        "os",
+        "json",
+        "dotenv"
+      ],
+      "imports_from": [
+        "selenium",
+        "selenium.webdriver.chrome.service",
+        "selenium.webdriver.common.by",
+        "selenium.webdriver.support.ui",
+        "selenium.webdriver.support"
+      ],
+      "env_vars": [],
+      "urls": [
+        "https://www.tiktok.com/@usuario/video/1234567890"
+      ],
+      "bq_fqn": [
+        "selenium.webdriver.chrome",
+        "selenium.webdriver.common",
+        "selenium.webdriver.support",
+        "selenium.webdriver.support",
+        "os.path.dirname",
+        "os.path.abspath",
+        "os.path.join",
+        "www.tiktok.com",
+        "os.path.join",
+        "el.text.strip",
+        "os.path.join"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/recolector/instagram_scraper.py",
+      "group": "ingestion",
+      "size": 2820,
+      "doc": "",
+      "imports": [
+        "os",
+        "time",
+        "dotenv"
+      ],
+      "imports_from": [
+        "selenium",
+        "selenium.webdriver.chrome.service",
+        "selenium.webdriver.common.by",
+        "selenium.webdriver.support.ui",
+        "selenium.webdriver.support"
+      ],
+      "env_vars": [
+        "INSTAGRAM_PASSWORD",
+        "INSTAGRAM_USERNAME"
+      ],
+      "urls": [
+        "https://www.instagram.com/accounts/login/"
+      ],
+      "bq_fqn": [
+        "selenium.webdriver.chrome",
+        "selenium.webdriver.common",
+        "selenium.webdriver.support",
+        "selenium.webdriver.support",
+        "os.path.dirname",
+        "os.path.abspath",
+        "os.path.join",
+        "www.instagram.com",
+        "os.path.join",
+        "el.text.strip"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "login_instagram",
+          "args": [
+            "driver"
+          ],
+          "returns": null,
+          "lineno": 18,
+          "doc": "Inicia sesión en Instagram."
+        },
+        {
+          "name": "get_post_comments",
+          "args": [
+            "url_post",
+            "max_comments"
+          ],
+          "returns": null,
+          "lineno": 40,
+          "doc": "Extrae comentarios de un post de Instagram."
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/validador_web/main.py",
+      "group": "frontend",
+      "size": 2518,
+      "doc": "",
+      "imports": [],
+      "imports_from": [
+        "flask"
+      ],
+      "env_vars": [],
+      "urls": [
+        "https://www.instagram.com/p/xyz123/"
+      ],
+      "bq_fqn": [
+        "www.instagram.com",
+        "127.0.0"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "pagina_de_validacion",
+          "args": [],
+          "returns": null,
+          "lineno": 12,
+          "doc": "Esta función se encarga de preparar los datos y mostrar la página de validación."
+        }
+      ],
+      "classes": [],
+      "flask_routes": [
+        "/",
+        "/"
+      ],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/Analizer/comment_metrics_job.py",
+      "group": "analytics",
+      "size": 8305,
+      "doc": "Scheduled job/Cloud Function to aggregate social media comments.\n\nThe routine pulls recent comments from the ``vw_comments_app_api`` BigQuery view\nand relies on :mod:`comment_analizer` to compute aggregated metrics (keywords,\nbasic sentiment).  The results are stored per post and per creator in a\nBigQuery table so they can be served from the Next.js API.",
+      "imports": [
+        "json",
+        "os",
+        "sys"
+      ],
+      "imports_from": [
+        "__future__",
+        "collections",
+        "datetime",
+        "typing",
+        "google.cloud",
+        "comment_analizer"
+      ],
+      "env_vars": [
+        "COMMENTS_METRICS_TABLE_FQN",
+        "COMMENTS_VIEW_FQN"
+      ],
+      "urls": [],
+      "bq_fqn": [
+        "os.path.dirname",
+        "os.path.abspath",
+        "sys.path.append",
+        "galletas-piloto-ju-250726.gmx_week_2025_09_04_2025_09_11.vw_comments_app_api",
+        "galletas-piloto-ju-250726.gmx_week_2025_09_04_2025_09_11.comment_metrics",
+        "request.args.get",
+        "request.args.get",
+        "request.args.get",
+        "request.args.get",
+        "request.args.get"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "_parse_timestamp",
+          "args": [
+            "value"
+          ],
+          "returns": null,
+          "lineno": 38,
+          "doc": ""
+        },
+        {
+          "name": "_fetch_comments",
+          "args": [
+            "client",
+            "view_fqn"
+          ],
+          "returns": null,
+          "lineno": 53,
+          "doc": ""
+        },
+        {
+          "name": "_aggregate_comment_groups",
+          "args": [
+            "rows"
+          ],
+          "returns": null,
+          "lineno": 94,
+          "doc": ""
+        },
+        {
+          "name": "_persist_metrics",
+          "args": [
+            "aggregated",
+            "table_fqn",
+            "client"
+          ],
+          "returns": null,
+          "lineno": 151,
+          "doc": ""
+        },
+        {
+          "name": "run_aggregation",
+          "args": [],
+          "returns": null,
+          "lineno": 168,
+          "doc": ""
+        },
+        {
+          "name": "aggregate_comments_entry",
+          "args": [
+            "request"
+          ],
+          "returns": null,
+          "lineno": 202,
+          "doc": "HTTP entry-point compatible with Cloud Functions."
+        },
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 243,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/Analizer/comment_analizer.py",
+      "group": "analytics",
+      "size": 10044,
+      "doc": "Utilities to analyse batches of IG/TikTok comments.\n\nThis module originally exposed a very small helper that read a JSON file with\ncomments and returned the top keywords.  The analytics needs have grown and we\nnow reuse the same logic in a number of places (API, scheduled jobs, ad-hoc\nanalysis).  The helpers below keep backwards compatibility while providing a\nstructured interface that works directly with in-memory lists of comments and\ncan persist the aggregated metrics in BigQuery when required.",
+      "imports": [
+        "json",
+        "os",
+        "re"
+      ],
+      "imports_from": [
+        "__future__",
+        "collections",
+        "dataclasses",
+        "datetime",
+        "typing",
+        "google.api_core.exceptions",
+        "google.cloud"
+      ],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [
+        "google.api_core.exceptions",
+        "os.path.exists",
+        "project.dataset.table",
+        "proyecto.dataset.tabla"
+      ],
+      "bq_schema_snippets": [
+        "        bigquery.SchemaField(\"aggregated_at\", \"TIMESTAMP\", mode=\"REQUIRED\"),\n        bigquery.SchemaField(\"aggregated_type\", \"STRING\"),\n        bigquery.SchemaField(\"creator_handle\", \"STRING\"),\n        bigquery.SchemaField(\"post_id\", \"STRING\"),\n        bigquery.SchemaField(\"platform\", \"STRING\"),\n        bigquery.SchemaField(\"total_comments\", \"INT64\"),\n        bigquery.SchemaField(\n            \"keywords\",\n            \"RECORD\",\n            mode=\"REPEATED\",\n            fields=[\n                bigquery.SchemaField(\"keyword\", \"STRING\"),\n                bigquery.SchemaField(\"percentage\", \"FLOAT64\"),\n                bigquery.SchemaField(\"porcentaje\", \"FLOAT64\"),\n            ],"
+      ],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "limpiar_texto",
+          "args": [
+            "texto"
+          ],
+          "returns": "str",
+          "lineno": 140,
+          "doc": "Limpia comentarios: elimina símbolos, links y minúsculas."
+        },
+        {
+          "name": "_extract_comment_text",
+          "args": [
+            "comment"
+          ],
+          "returns": null,
+          "lineno": 148,
+          "doc": "Return the textual content from different comment payload shapes."
+        },
+        {
+          "name": "_tokenise",
+          "args": [
+            "comments"
+          ],
+          "returns": null,
+          "lineno": 163,
+          "doc": ""
+        },
+        {
+          "name": "_top_keywords",
+          "args": [
+            "tokens",
+            "top_n"
+          ],
+          "returns": null,
+          "lineno": 171,
+          "doc": ""
+        },
+        {
+          "name": "_sentiment_for_comment",
+          "args": [
+            "comment"
+          ],
+          "returns": "str",
+          "lineno": 190,
+          "doc": ""
+        },
+        {
+          "name": "_sentiment_breakdown",
+          "args": [
+            "comments"
+          ],
+          "returns": null,
+          "lineno": 201,
+          "doc": ""
+        },
+        {
+          "name": "analyze_comment_list",
+          "args": [
+            "comments",
+            "top_n"
+          ],
+          "returns": "AggregatedMetrics",
+          "lineno": 217,
+          "doc": "Compute aggregated metrics (keywords + sentiment) from a comment list."
+        },
+        {
+          "name": "analizar_comentarios",
+          "args": [
+            "ruta_json",
+            "top_n"
+          ],
+          "returns": null,
+          "lineno": 234,
+          "doc": "Legacy helper kept for backwards compatibility.\n\nThe function now delegates to :func:`analyze_comment_list` so existing\nscripts that relied on reading a ``comments.json`` file keep working."
+        },
+        {
+          "name": "save_metrics_to_bigquery",
+          "args": [
+            "metrics",
+            "metadata",
+            "table_fqn",
+            "client",
+            "create_table_if_needed"
+          ],
+          "returns": null,
+          "lineno": 252,
+          "doc": "Persist aggregated metrics to a BigQuery table.\n\nParameters\n----------\nmetrics:\n    Metrics calculated with :func:`analyze_comment_list`.\nmetadata:\n    Additional fields to store alongside the metrics (for example the\n    ``post_id`` or ``creator_handle``).\ntable_fqn:\n    Fully qualified table name in the form ``project.dataset.table``.\nclient:\n    Optional BigQuery client.  When ``None`` the function will try to\n    instantiate one.\ncreate_table_if_needed:\n    When ``True`` (default) the function will attempt to create the table\n    with an appropriate schema if it does not exist."
+        },
+        {
+          "name": "_ensure_metrics_table",
+          "args": [
+            "client",
+            "table_fqn"
+          ],
+          "returns": null,
+          "lineno": 295,
+          "doc": ""
+        }
+      ],
+      "classes": [
+        {
+          "name": "AggregatedMetrics",
+          "lineno": 123,
+          "doc": "Container for aggregated comment metrics.",
+          "methods": [
+            {
+              "name": "asdict",
+              "args": [
+                "self"
+              ],
+              "lineno": 130,
+              "doc": "Return a mutable dictionary representation useful for serialization."
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/orquestador/reparar_script.py",
+      "group": "backend-orquestador",
+      "size": 4657,
+      "doc": "",
+      "imports": [
+        "os"
+      ],
+      "imports_from": [],
+      "env_vars": [
+        "BRIGHTDATA_API_TOKEN",
+        "BRIGHTDATA_ZONE_NAME"
+      ],
+      "urls": [
+        "https://api.brightdata.com/request"
+      ],
+      "bq_fqn": [
+        "api.brightdata.com",
+        "requests.exceptions.HTTPError",
+        "e.response.status_code",
+        "e.response.text",
+        "e.response.status_code",
+        "requests.exceptions.RequestException",
+        "os.path.join"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/orquestador/recolector_final.py",
+      "group": "backend-orquestador",
+      "size": 0,
+      "doc": "",
+      "imports": [],
+      "imports_from": [],
+      "env_vars": [],
+      "urls": [],
+      "bq_fqn": [],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/orquestador/main.py",
+      "group": "backend-orquestador",
+      "size": 2345,
+      "doc": "",
+      "imports": [
+        "functions_framework",
+        "requests",
+        "os",
+        "json",
+        "google.auth.transport.requests",
+        "google.oauth2.id_token"
+      ],
+      "imports_from": [
+        "google.cloud"
+      ],
+      "env_vars": [],
+      "urls": [
+        "https://us-central1-galletas-piloto-ju-250726.cloudfunctions.net/analizar_texto_individual"
+      ],
+      "bq_fqn": [
+        "google.auth.transport",
+        "google.oauth2.id_token",
+        "us-central1-galletas-piloto-ju-250726.cloudfunctions.net",
+        "google.auth.transport",
+        "google.oauth2.id_token"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "llamar_analizador",
+          "args": [
+            "texto"
+          ],
+          "returns": null,
+          "lineno": 10,
+          "doc": ""
+        },
+        {
+          "name": "guardar_en_bigquery",
+          "args": [
+            "datos"
+          ],
+          "returns": null,
+          "lineno": 20,
+          "doc": ""
+        },
+        {
+          "name": "orquestar_analisis_conversacion",
+          "args": [
+            "request"
+          ],
+          "returns": null,
+          "lineno": 33,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [
+        "orquestar_analisis_conversacion"
+      ],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/conversion/convert_yaml.py",
+      "group": "otros",
+      "size": 1972,
+      "doc": "A script for converting between legacy YAML and public JSON representation.\n\nExample invocation:\n  convert_yaml.py app.yaml > app.json",
+      "imports": [
+        "argparse",
+        "json",
+        "sys",
+        "ruamel.yaml"
+      ],
+      "imports_from": [
+        "__future__",
+        "googlecloudsdk.appengine.admin.tools.conversion",
+        "googlecloudsdk.appengine.admin.tools.conversion"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine.admin",
+        "googlecloudsdk.appengine.admin"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "main",
+          "args": [],
+          "returns": null,
+          "lineno": 38,
+          "doc": ""
+        },
+        {
+          "name": "GetSchemaParser",
+          "args": [
+            "api_version"
+          ],
+          "returns": null,
+          "lineno": 57,
+          "doc": ""
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/conversion/yaml_schema_v1.py",
+      "group": "otros",
+      "size": 8881,
+      "doc": "Definition for conversion between legacy YAML and the API JSON formats.",
+      "imports": [],
+      "imports_from": [
+        "__future__",
+        "googlecloudsdk.appengine.admin.tools.conversion",
+        "googlecloudsdk.appengine.admin.tools.conversion"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine.admin",
+        "googlecloudsdk.appengine.admin"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/conversion/__init__.py",
+      "group": "otros",
+      "size": 596,
+      "doc": "",
+      "imports": [],
+      "imports_from": [],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/conversion/yaml_schema_v1beta.py",
+      "group": "otros",
+      "size": 9343,
+      "doc": "Definition for conversion between legacy YAML and the API JSON formats.",
+      "imports": [],
+      "imports_from": [
+        "__future__",
+        "googlecloudsdk.appengine.admin.tools.conversion",
+        "googlecloudsdk.appengine.admin.tools.conversion"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine.admin",
+        "googlecloudsdk.appengine.admin"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/conversion/converters.py",
+      "group": "otros",
+      "size": 10459,
+      "doc": "Conversions to translate between legacy YAML and OnePlatform protos.",
+      "imports": [
+        "re"
+      ],
+      "imports_from": [
+        "__future__",
+        "typing",
+        "googlecloudsdk.appengine.api",
+        "googlecloudsdk.appengine.api",
+        "google.appengine.api",
+        "google.appengine.api"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "googlecloudsdk.appengine.api",
+        "google.appengine.api",
+        "googlecloudsdk.appengine.api",
+        "google.appengine.api",
+        "os.path.join"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "_AppendRegexToPath",
+          "args": [
+            "path",
+            "regex"
+          ],
+          "returns": "str",
+          "lineno": 108,
+          "doc": "Equivalent to os.path.join(), except uses forward slashes always."
+        },
+        {
+          "name": "_MoveFieldsTo",
+          "args": [
+            "source",
+            "field_names",
+            "target_field_name"
+          ],
+          "returns": null,
+          "lineno": 113,
+          "doc": "Moves fields from source dict into a sub-dict under target_field_name."
+        },
+        {
+          "name": "_ValidateRegexMatch",
+          "args": [
+            "value",
+            "regex",
+            "error_msg"
+          ],
+          "returns": null,
+          "lineno": 124,
+          "doc": "Validate that a value matches a regex, raising ValueError otherwise."
+        },
+        {
+          "name": "_GetHandlerType",
+          "args": [
+            "handler"
+          ],
+          "returns": "str",
+          "lineno": 130,
+          "doc": "Get handler type of mapping."
+        },
+        {
+          "name": "ToVpcEgressSettingEnum",
+          "args": [
+            "value"
+          ],
+          "returns": "str",
+          "lineno": 147,
+          "doc": "Converts a string to a VPC egress setting."
+        },
+        {
+          "name": "EnumConverter",
+          "args": [
+            "prefix"
+          ],
+          "returns": null,
+          "lineno": 156,
+          "doc": "Create conversion function which translates from string to enum value."
+        },
+        {
+          "name": "Not",
+          "args": [
+            "value"
+          ],
+          "returns": "bool",
+          "lineno": 168,
+          "doc": "Convert the given boolean value to the opposite value."
+        },
+        {
+          "name": "ToJsonString",
+          "args": [
+            "value"
+          ],
+          "returns": "str",
+          "lineno": 175,
+          "doc": "Coerces a primitive value into a JSON-compatible string."
+        },
+        {
+          "name": "ToUpperCaseJsonString",
+          "args": [
+            "value"
+          ],
+          "returns": "str",
+          "lineno": 184,
+          "doc": "Coerces a primitive value into an upper-case JSON-compatible string."
+        },
+        {
+          "name": "StringToInt",
+          "args": [
+            "handle_automatic"
+          ],
+          "returns": null,
+          "lineno": 189,
+          "doc": "Create conversion function which converts from a string to an integer."
+        },
+        {
+          "name": "SecondsToDuration",
+          "args": [
+            "value"
+          ],
+          "returns": "str",
+          "lineno": 198,
+          "doc": "Convert seconds expressed as integer to a Duration value."
+        },
+        {
+          "name": "LatencyToDuration",
+          "args": [
+            "value"
+          ],
+          "returns": null,
+          "lineno": 203,
+          "doc": "Convert valid pending latency argument to a Duration value of seconds."
+        },
+        {
+          "name": "IdleTimeoutToDuration",
+          "args": [
+            "value"
+          ],
+          "returns": "str",
+          "lineno": 213,
+          "doc": "Convert valid idle timeout argument to a Duration value of seconds."
+        },
+        {
+          "name": "ExpirationToDuration",
+          "args": [
+            "value"
+          ],
+          "returns": "str",
+          "lineno": 221,
+          "doc": "Convert valid expiration argument to a Duration value of seconds."
+        },
+        {
+          "name": "ConvertAutomaticScaling",
+          "args": [
+            "automatic_scaling"
+          ],
+          "returns": null,
+          "lineno": 228,
+          "doc": "Moves several VM-specific automatic scaling parameters to submessages."
+        },
+        {
+          "name": "ConvertUrlHandler",
+          "args": [
+            "handler"
+          ],
+          "returns": null,
+          "lineno": 237,
+          "doc": "Rejiggers the structure of the url handler based on its type."
+        },
+        {
+          "name": "ConvertDispatchHandler",
+          "args": [
+            "handler"
+          ],
+          "returns": null,
+          "lineno": 272,
+          "doc": "Handles dispatch rules conversion."
+        },
+        {
+          "name": "ConvertEndpointsRolloutStrategyToEnum",
+          "args": [
+            "value"
+          ],
+          "returns": "str",
+          "lineno": 293,
+          "doc": "Converts the rollout strategy to an enum."
+        },
+        {
+          "name": "ConvertEntrypoint",
+          "args": [
+            "entrypoint"
+          ],
+          "returns": null,
+          "lineno": 304,
+          "doc": "Converts the raw entrypoint to a nested shell value."
+        }
+      ],
+      "classes": [],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    },
+    {
+      "file": "backend/python_jobs/conversion/schema.py",
+      "group": "otros",
+      "size": 6258,
+      "doc": "",
+      "imports": [
+        "logging"
+      ],
+      "imports_from": [
+        "__future__"
+      ],
+      "env_vars": [],
+      "urls": [
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "bq_fqn": [
+        "www.apache.org",
+        "self.fields.items",
+        "self.element.ConvertValue"
+      ],
+      "bq_schema_snippets": [],
+      "reads": [],
+      "writes": [],
+      "functions": [
+        {
+          "name": "UnderscoreToLowerCamelCase",
+          "args": [
+            "text"
+          ],
+          "returns": null,
+          "lineno": 25,
+          "doc": "Convert underscores to lower camel case (e.g. 'foo_bar' --> 'fooBar')."
+        },
+        {
+          "name": "ValidateType",
+          "args": [
+            "source_value",
+            "expected_type"
+          ],
+          "returns": null,
+          "lineno": 31,
+          "doc": ""
+        },
+        {
+          "name": "ValidateNotType",
+          "args": [
+            "source_value",
+            "non_expected_type"
+          ],
+          "returns": null,
+          "lineno": 39,
+          "doc": ""
+        },
+        {
+          "name": "MergeDictionaryValues",
+          "args": [
+            "old_dict",
+            "new_dict"
+          ],
+          "returns": null,
+          "lineno": 45,
+          "doc": "Attempts to merge the given dictionaries.\n\nWarns if a key exists with different values in both dictionaries. In this\ncase, the new_dict value trumps the previous value."
+        }
+      ],
+      "classes": [
+        {
+          "name": "SchemaField",
+          "lineno": 68,
+          "doc": "Transformation strategy from input dictionary to an output dictionary.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "target_name",
+                "converter"
+              ],
+              "lineno": 71,
+              "doc": ""
+            },
+            {
+              "name": "ConvertValue",
+              "args": [
+                "self",
+                "value"
+              ],
+              "lineno": 75,
+              "doc": ""
+            },
+            {
+              "name": "_VisitInternal",
+              "args": [
+                "self",
+                "value"
+              ],
+              "lineno": 79,
+              "doc": ""
+            },
+            {
+              "name": "_PerformConversion",
+              "args": [
+                "self",
+                "result"
+              ],
+              "lineno": 82,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "Message",
+          "lineno": 86,
+          "doc": "A message has a collection of fields which should be converted.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "target_name",
+                "converter",
+                "preserve_names"
+              ],
+              "lineno": 89,
+              "doc": ""
+            },
+            {
+              "name": "_VisitInternal",
+              "args": [
+                "self",
+                "value"
+              ],
+              "lineno": 96,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "Value",
+          "lineno": 121,
+          "doc": "Represents a leaf node. Only the value itself is copied.",
+          "methods": [
+            {
+              "name": "_VisitInternal",
+              "args": [
+                "self",
+                "value"
+              ],
+              "lineno": 124,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "Map",
+          "lineno": 130,
+          "doc": "Represents a leaf node where the value itself is a map.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "target_name",
+                "converter",
+                "key_converter",
+                "value_converter"
+              ],
+              "lineno": 133,
+              "doc": ""
+            },
+            {
+              "name": "_VisitInternal",
+              "args": [
+                "self",
+                "value"
+              ],
+              "lineno": 140,
+              "doc": ""
+            }
+          ]
+        },
+        {
+          "name": "RepeatedField",
+          "lineno": 152,
+          "doc": "Represents a list of nested elements. Each item in the list is copied.",
+          "methods": [
+            {
+              "name": "__init__",
+              "args": [
+                "self",
+                "target_name",
+                "converter",
+                "element"
+              ],
+              "lineno": 155,
+              "doc": ""
+            },
+            {
+              "name": "_VisitInternal",
+              "args": [
+                "self",
+                "value"
+              ],
+              "lineno": 165,
+              "doc": ""
+            }
+          ]
+        }
+      ],
+      "flask_routes": [],
+      "cf_entrypoints": [],
+      "gaps": []
+    }
+  ],
+  "edges": [
+    [
+      "backend/python_jobs/Analizer/comment_metrics_job.py",
+      "backend/python_jobs/Analizer/comment_analizer.py",
+      "import"
+    ]
+  ]
+}
