@@ -1,7 +1,8 @@
 // app/layout.tsx
 import "./globals.css";
 import { ReactNode } from "react";
-import NavBar from "@/components/NavBar";
+import Script from "next/script";
+import NavBar from "./api/components/NavBar";
 
 export const metadata = {
   title: "Dashboard de Insights",
@@ -11,7 +12,24 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es">
-      <head>
+      <head>  
+        <Script id="tailwind-config" strategy="beforeInteractive">
+          {`
+            tailwind.config = {
+              theme: {
+                extend: {
+                  fontFamily: {
+                    sans: ["Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+                  },
+                },
+              },
+            };
+          `}
+        </Script>
+        <Script
+          src="https://cdn.tailwindcss.com?plugins=forms,typography"
+          strategy="beforeInteractive"
+        />
         {/* Remix Icons (tu UI usa clases ri-...) */}
         <link
           rel="stylesheet"

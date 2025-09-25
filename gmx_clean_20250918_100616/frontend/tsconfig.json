@@ -10,7 +10,8 @@
     "strict": true,
     "baseUrl": "./",
     "paths": {
-      "@/lib/*": ["app/lib/*"]
+       "@/lib/*": ["app/lib/*"],
+      "@/components/*": ["app/components/*"]
     },
     "jsx": "react-jsx"
   },
